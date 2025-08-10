@@ -1,23 +1,20 @@
-name: Branch Policy Check
-on:
-  pull_request:
-    branches: [main, production]
+- name: Debug branch info
+  run: |
+    echo "Base branch (target): ${{ github.base_ref }}"
+    echo "Head branch (source): ${{ github.head_ref }}"
+    echo "Event name: ${{ github.event_name }}"
 
-jobs:
-  check-branch-policy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check branch policy
-        run: |
-          if [[ "${{ github.base_ref }}" == "production" ]]; then
-            if [[ "${{ github.head_ref }}" != "dev" && "${{ github.head_ref }}" != "main" ]]; then
-              echo "❌ PRs to production can only be from dev or main branches"
-              exit 1
-            fi
-          elif [[ "${{ github.base_ref }}" == "main" ]]; then
-            if [[ "${{ github.head_ref }}" != "production" ]]; then
-              echo "❌ PRs to main can only be from production branch"
-              exit 1
-            fi
-          fi
-          echo "✅ Branch policy check passed"
+- name: Check branch policy
+  run: |
+    if [[ "${{ github.base_ref }}" == "production" ]]; then
+      if [[ "${{ github.head_ref }}" != "dev" && "${{ github.head_ref }}" != "main" ]]; then
+        echo "❌ PRs to production can only be from dev or main branches"
+        exit 1
+      fi
+    elif [[ "${{ github.base_ref }}" == "main" ]]; then
+      if [[ "${{ github.head_ref }}" != "production" ]]; then
+        echo "❌ PRs to main can only be from production branch"
+        exit 1
+      fi
+    fi
+    echo "✅ Branch policy check passed"
