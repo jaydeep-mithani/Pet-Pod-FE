@@ -2,12 +2,16 @@ name: Enforce Branch Source Rules
 
 on:
   pull_request:
-    branches:
-      - production
-      - main
+    # Remove branch restriction - trigger on all PRs
+
+permissions:
+  contents: read
+  pull-requests: read
+  statuses: write
+  checks: write
 
 jobs:
-  check-branch:
+  check-branch-policy:
     runs-on: ubuntu-latest
     steps:
       - name: Check branch policy
@@ -17,14 +21,25 @@ jobs:
 
           echo "PR from $HEAD_BRANCH into $BASE_BRANCH"
 
-          # Rule 1: Only dev or main → production
-          if [ "$BASE_BRANCH" = "production" ] && [ "$HEAD_BRANCH" != "dev" ] && [ "$HEAD_BRANCH" != "main" ]; then
-            echo "❌ Only dev or main can merge into production."
-            exit 1
-          fi
+          # Only enforce rules for protected branches
+          if [ "$BASE_BRANCH" = "production" ] || [ "$BASE_BRANCH" = "main" ]; then
+            # Rule 1: Only dev or main → production
+            if [ "$BASE_BRANCH" = "production" ] && [ "$HEAD_BRANCH" != "dev" ] && [ "$HEAD_BRANCH" != "main" ]; then
+              echo "❌ Only dev or main can merge into production."
+              echo "Current source: $HEAD_BRANCH"
+              echo "Allowed sources for production: dev, main"
+              exit 1
+            fi
 
-          # Rule 2: Only production → main
-          if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "production" ]; then
-            echo "❌ Only production can merge into main."
-            exit 1
+            # Rule 2: Only production → main
+            if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "production" ]; then
+              echo "❌ Only production can merge into main."
+              echo "Current source: $HEAD_BRANCH"
+              echo "Allowed source for main: production"
+              exit 1
+            fi
+
+            echo "✅ Branch policy check passed for protected branch: $BASE_BRANCH"
+          else
+            echo "✅ No branch restrictions for $BASE_BRANCH - check passed"
           fi
