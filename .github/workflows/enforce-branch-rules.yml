@@ -6,8 +6,14 @@ on:
       - production
       - main
 
+permissions:
+  contents: read
+  pull-requests: read
+  statuses: write
+  checks: write
+
 jobs:
-  check-branch:
+  check-branch-policy:
     runs-on: ubuntu-latest
     steps:
       - name: Check branch policy
@@ -20,11 +26,17 @@ jobs:
           # Rule 1: Only dev or main → production
           if [ "$BASE_BRANCH" = "production" ] && [ "$HEAD_BRANCH" != "dev" ] && [ "$HEAD_BRANCH" != "main" ]; then
             echo "❌ Only dev or main can merge into production."
+            echo "Current source: $HEAD_BRANCH"
+            echo "Allowed sources for production: dev, main"
             exit 1
           fi
 
           # Rule 2: Only production → main
           if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "production" ]; then
             echo "❌ Only production can merge into main."
+            echo "Current source: $HEAD_BRANCH"
+            echo "Allowed source for main: production"
             exit 1
           fi
+
+          echo "✅ Branch policy check passed!"
