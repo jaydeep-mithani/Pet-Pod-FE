@@ -1,23 +1,30 @@
-name: Branch Policy Check
+name: Enforce Branch Source Rules
+
 on:
   pull_request:
-    branches: [main, production]
+    branches:
+      - production
+      - main
 
 jobs:
-  check-branch-policy:
+  check-branch:
     runs-on: ubuntu-latest
     steps:
       - name: Check branch policy
         run: |
-          if [[ "${{ github.base_ref }}" == "production" ]]; then
-            if [[ "${{ github.head_ref }}" != "dev" && "${{ github.head_ref }}" != "main" ]]; then
-              echo "❌ PRs to production can only be from dev or main branches"
-              exit 1
-            fi
-          elif [[ "${{ github.base_ref }}" == "main" ]]; then
-            if [[ "${{ github.head_ref }}" != "production" ]]; then
-              echo "❌ PRs to main can only be from production branch"
-              exit 1
-            fi
+          BASE_BRANCH="${{ github.base_ref }}"  # target branch of the PR
+          HEAD_BRANCH="${{ github.head_ref }}"  # source branch of the PR
+
+          echo "PR from $HEAD_BRANCH into $BASE_BRANCH"
+
+          # Rule 1: Only dev or main → production
+          if [ "$BASE_BRANCH" = "production" ] && [ "$HEAD_BRANCH" != "dev" ] && [ "$HEAD_BRANCH" != "main" ]; then
+            echo "❌ Only dev or main can merge into production."
+            exit 1
           fi
-          echo "✅ Branch policy check passed"
+
+          # Rule 2: Only production → main
+          if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "production" ]; then
+            echo "❌ Only production can merge into main."
+            exit 1
+          fi
