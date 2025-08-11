@@ -15,7 +15,8 @@ export default function Home() {
         creating lasting bonds while helping reduce pet abandonment. We are
         working hard to bring this project to life as soon as possible, and we
         truely appreciate your patience. Thanks for visiting petpod, please
-        visit regulary for any updates if you are interested in following us.
+        visit regulary for any updates if you are interested in staying tuned
+        and following our project.
       </p>
     </div>
   );
