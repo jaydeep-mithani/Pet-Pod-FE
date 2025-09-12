@@ -1,28 +1,31 @@
-import React from 'react';
-import Card from '../ui/Card';
-import Section from '../ui/Section';
+import React from "react";
+import Card from "../ui/Card";
+import Section from "../ui/Section";
 
 const TestimonialsSection: React.FC = () => {
   const testimonials = [
     {
-      name: 'Sarah Johnson',
-      role: 'Dog Mom',
-      image: '👩‍🦰',
-      content: 'Pet Pod helped me find my perfect companion, Luna. The process was so smooth and the support team was incredible throughout the entire journey.',
+      name: "Sarah Johnson",
+      role: "Dog Mom",
+      image: "👩‍🦰",
+      content:
+        "Pet Pod helped me find my perfect companion, Luna. The process was so smooth and the support team was incredible throughout the entire journey.",
       rating: 5,
     },
     {
-      name: 'Mike Chen',
-      role: 'Cat Dad',
-      image: '👨‍💼',
-      content: 'I was skeptical about online pet adoption, but Pet Pod made it feel safe and personal. Whiskers has been the best addition to our family.',
+      name: "Mike Chen",
+      role: "Cat Dad",
+      image: "👨‍💼",
+      content:
+        "I was skeptical about online pet adoption, but Pet Pod made it feel safe and personal. Whiskers has been the best addition to our family.",
       rating: 5,
     },
     {
-      name: 'Emily Rodriguez',
-      role: 'Pet Foster',
-      image: '👩‍⚕️',
-      content: 'As a foster parent, I love how Pet Pod connects me with responsible adopters. The platform makes the adoption process transparent and trustworthy.',
+      name: "Emily Rodriguez",
+      role: "Pet Foster",
+      image: "👩‍⚕️",
+      content:
+        "As a foster parent, I love how Pet Pod connects me with responsible adopters. The platform makes the adoption process transparent and trustworthy.",
       rating: 5,
     },
   ];
@@ -34,10 +37,11 @@ const TestimonialsSection: React.FC = () => {
           What Our Community Says
         </h2>
         <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-          Real stories from real families who found their perfect pets through Pet Pod.
+          Real stories from real families who found their perfect pets through
+          Pet Pod.
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {testimonials.map((testimonial, index) => (
           <Card key={index} className="relative">
@@ -52,15 +56,17 @@ const TestimonialsSection: React.FC = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex mb-3">
               {[...Array(testimonial.rating)].map((_, i) => (
-                <span key={i} className="text-yellow-400 text-lg">⭐</span>
+                <span key={i} className="text-yellow-400 text-lg">
+                  ⭐
+                </span>
               ))}
             </div>
-            
+
             <p className="text-gray-600 dark:text-gray-300 italic">
-              "{testimonial.content}"
+              &quot;{testimonial.content}&quot;
             </p>
           </Card>
         ))}
