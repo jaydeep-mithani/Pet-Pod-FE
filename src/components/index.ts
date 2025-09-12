@@ -5,6 +5,10 @@ export { default as Section } from './ui/Section';
 export { default as Carousel } from './ui/Carousel';
 export { default as FloatingElements } from './ui/FloatingElements';
 export { default as FloatingNavbar } from './ui/FloatingNavbar';
+export { default as Input } from './ui/Input';
+export { default as GoogleButton } from './ui/GoogleButton';
+export { default as AuthCard } from './ui/AuthCard';
+export { default as AuthLayout } from './ui/AuthLayout';
 
 // Sections
 export { default as HeroSection } from './sections/HeroSection';
