@@ -8,29 +8,25 @@ const HeroSection: React.FC = () => {
   const carouselItems = [
     {
       id: 1,
-      imageSrc:
-        "https://images.unsplash.com/photo-1593134257782-e89567b7718a?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imageSrc: "/assets/images/carousel1.jpg",
       title: "Find Your Perfect Dog",
       subtitle: "Loyal companions waiting for their forever home",
     },
     {
       id: 2,
-      imageSrc:
-        "https://images.unsplash.com/photo-1570450466756-c1c0bc431719?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imageSrc: "/assets/images/carousel2.jpg",
       title: "Adopt a Loving Cat",
       subtitle: "Independent spirits ready to share their love",
     },
     {
       id: 3,
-      imageSrc:
-        "https://images.unsplash.com/photo-1619447257726-fe312296ee9b?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imageSrc: "/assets/images/carousel3.jpg",
       title: "Small Pets, Big Hearts",
       subtitle: "Rabbits, hamsters, and more adorable companions",
     },
     {
       id: 4,
-      imageSrc:
-        "https://images.unsplash.com/photo-1523761467347-327dfb5a16f6?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imageSrc: "/assets/images/carousel4.jpg",
       title: "Feathered Friends",
       subtitle: "Birds and exotic pets looking for caring families",
     },

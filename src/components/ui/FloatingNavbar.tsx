@@ -3,14 +3,18 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Heart, Home, Users, Phone, Info } from "lucide-react";
 import Button from "./Button";
+import { usePathname } from "next/navigation";
 
 interface FloatingNavbarProps {
   className?: string;
 }
 
 const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
+  const pathName = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const shouldBeHidden = ["/signin", "/signup"].includes(pathName);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +41,8 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
     }
     setIsMobileMenuOpen(false);
   };
+
+  if (shouldBeHidden) return;
 
   return (
     <>
@@ -88,7 +94,11 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant={!isScrolled ? "primary" : "floating"} size="md">
+              <Button
+                variant={!isScrolled ? "primary" : "floating"}
+                size="md"
+                onClick={() => (window.location.href = "/signup")}
+              >
                 Sign up
               </Button>
               <Button variant={!isScrolled ? "secondary" : "ghost"} size="md">
@@ -152,6 +162,7 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
                 variant={!isScrolled ? "primary" : "floating"}
                 size="md"
                 className="w-full mb-2"
+                onClick={() => (window.location.href = "/signup")}
               >
                 Sign up
               </Button>
