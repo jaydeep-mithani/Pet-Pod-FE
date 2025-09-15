@@ -49,7 +49,7 @@ const Input: React.FC<InputProps> = ({
       )}
       <div
         className="flex items-center px-3 gap-3 rounded-xl border-2 transition-all duration-300
-          focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent
+          focus-within:outline-none focus-within:ring-2 focus-within:ring-pink-500 focus-within:border-transparent hover:border-pink-300 hover:focus-within:border-transparent
           disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100
           dark:bg-gray-800 dark:text-white dark:border-gray-600"
       >

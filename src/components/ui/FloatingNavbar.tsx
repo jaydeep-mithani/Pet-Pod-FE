@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Heart, Home, Users, Phone, Info } from "lucide-react";
 import Button from "./Button";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 interface FloatingNavbarProps {
   className?: string;
@@ -14,7 +15,7 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const shouldBeHidden = ["/signin", "/signup"].includes(pathName);
+  const shouldBeHidden = ["/login", "/signin", "/signup"].includes(pathName);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,18 +59,22 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
+              <Link href={"/"}>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <Heart className="w-5 h-5 text-white" />
+                  </div>
+                  <span
+                    className={`text-xl font-bold transition-colors duration-500 ${
+                      !isScrolled
+                        ? "text-gray-900"
+                        : "text-white drop-shadow-lg"
+                    }`}
+                  >
+                    Pet Pod
+                  </span>
                 </div>
-                <span
-                  className={`text-xl font-bold transition-colors duration-500 ${
-                    !isScrolled ? "text-gray-900" : "text-white drop-shadow-lg"
-                  }`}
-                >
-                  Pet Pod
-                </span>
-              </div>
+              </Link>
             </div>
 
             {/* Desktop Navigation */}
@@ -94,16 +99,20 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-3">
-              <Button
-                variant={!isScrolled ? "primary" : "floating"}
-                size="md"
-                onClick={() => (window.location.href = "/signup")}
-              >
-                Sign up
-              </Button>
-              <Button variant={!isScrolled ? "secondary" : "ghost"} size="md">
-                Log in
-              </Button>
+              <Link href={"/signup"}>
+                <Button
+                  variant={!isScrolled ? "primary" : "floating"}
+                  size="md"
+                  onClick={() => (window.location.href = "/signup")}
+                >
+                  Sign up
+                </Button>
+              </Link>
+              <Link href={"/login"}>
+                <Button variant={!isScrolled ? "secondary" : "ghost"} size="md">
+                  Log in
+                </Button>
+              </Link>
             </div>
 
             {/* Mobile menu button */}
