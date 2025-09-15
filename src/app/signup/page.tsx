@@ -5,6 +5,7 @@ import { Heart, Mail, Phone, Eye, EyeOff } from "lucide-react";
 import { Button, Card } from "@/components";
 import Input from "@/components/ui/Input";
 import Image from "next/image";
+import Link from "next/link";
 
 const SignUpPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -89,12 +90,14 @@ const SignUpPage: React.FC = () => {
           {/* Left Side - Branding & Image */}
           <div className="hidden lg:block text-white space-y-8 animate-fade-in">
             <div className="text-center lg:text-left">
-              <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <Heart className="w-7 h-7 text-white" />
+              <Link href={"/"}>
+                <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <Heart className="w-7 h-7 text-white" />
+                  </div>
+                  <h1 className="text-4xl font-bold">Pet Pod</h1>
                 </div>
-                <h1 className="text-4xl font-bold">Pet Pod</h1>
-              </div>
+              </Link>
               <h2 className="text-3xl font-semibold mb-4 text-blue-100">
                 Join Our Community
               </h2>
@@ -122,14 +125,16 @@ const SignUpPage: React.FC = () => {
             <Card className="bg-white/95 backdrop-blur-sm border-white/20 shadow-2xl">
               <div className="p-8">
                 {/* Mobile Logo */}
-                <div className="lg:hidden flex items-center justify-center space-x-2 mb-8">
-                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <Heart className="w-5 h-5 text-white" />
+                <Link href={"/"}>
+                  <div className="lg:hidden flex items-center justify-center space-x-2 mb-8">
+                    <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <Heart className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      Pet Pod
+                    </span>
                   </div>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    Pet Pod
-                  </span>
-                </div>
+                </Link>
 
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
