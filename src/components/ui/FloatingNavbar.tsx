@@ -28,17 +28,23 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
   }, []);
 
   const navItems = [
-    { name: "Home", href: "#home", icon: Home },
+    { name: "Home", href: "/", icon: Home },
     { name: "About", href: "#about", icon: Info },
     { name: "Features", href: "#features", icon: Heart },
-    { name: "Community", href: "#community", icon: Users },
+    { name: "Community", href: "/community", icon: Users },
     { name: "Contact", href: "#contact", icon: Phone },
   ];
 
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    if (href.startsWith('/')) {
+      // Handle page navigation
+      window.location.href = href;
+    } else {
+      // Handle section scrolling
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
     setIsMobileMenuOpen(false);
   };
