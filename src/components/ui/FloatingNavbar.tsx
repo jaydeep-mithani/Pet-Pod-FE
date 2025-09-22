@@ -28,17 +28,23 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
   }, []);
 
   const navItems = [
-    { name: "Home", href: "#home", icon: Home },
+    { name: "Home", href: "/", icon: Home },
     { name: "About", href: "#about", icon: Info },
     { name: "Features", href: "#features", icon: Heart },
-    { name: "Community", href: "#community", icon: Users },
+    { name: "Community", href: "/community", icon: Users },
     { name: "Contact", href: "#contact", icon: Phone },
   ];
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const handleNavigation = (href: string) => {
+    if (href.startsWith('/')) {
+      // Internal page navigation
+      window.location.href = href;
+    } else {
+      // Scroll to section
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
     setIsMobileMenuOpen(false);
   };
@@ -83,7 +89,7 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
                 {navItems.map((item) => (
                   <button
                     key={item.name}
-                    onClick={() => scrollToSection(item.href)}
+                    onClick={() => handleNavigation(item.href)}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 flex items-center space-x-1 ${
                       !isScrolled
                         ? "text-gray-700 hover:text-pink-600 hover:bg-pink-50"
@@ -151,7 +157,7 @@ const FloatingNavbar = ({ className = "" }: FloatingNavbarProps) => {
             {navItems.map((item) => (
               <button
                 key={item.name}
-                onClick={() => scrollToSection(item.href)}
+                onClick={() => handleNavigation(item.href)}
                 className={`px-3 py-2 rounded-md text-base font-medium transition-all duration-300 flex items-center space-x-2 w-full text-left ${
                   !isScrolled
                     ? "text-gray-700 hover:text-pink-600 hover:bg-pink-50"
