@@ -14,3 +14,9 @@ export { default as StatsSection } from './sections/StatsSection';
 export { default as TestimonialsSection } from './sections/TestimonialsSection';
 export { default as CTASection } from './sections/CTASection';
 export { default as Footer } from './sections/Footer';
+
+// Community Page Sections
+export { default as FeaturedPetsSection } from './sections/FeaturedPetsSection';
+export { default as CommunityStatsSection } from './sections/CommunityStatsSection';
+export { default as SuccessStoriesSection } from './sections/SuccessStoriesSection';
+export { default as CommunityEventsSection } from './sections/CommunityEventsSection';
