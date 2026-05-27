@@ -1,20 +1,23 @@
 import {
   HeroSection,
-  FeaturesSection,
-  StatsSection,
-  TestimonialsSection,
-  CTASection,
+  LivePetsPreviewSection,
+  HowItWorksSection,
+  WhyNoMoneySection,
+  FinalCTASection,
   Footer,
-} from '@/components';
+} from "@/components";
+
+export const revalidate = 60;
+
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       <HeroSection />
-      <FeaturesSection />
-      <StatsSection />
-      <TestimonialsSection />
-      <CTASection />
+      <LivePetsPreviewSection />
+      <HowItWorksSection />
+      <WhyNoMoneySection />
+      <FinalCTASection />
       <Footer />
     </main>
   );

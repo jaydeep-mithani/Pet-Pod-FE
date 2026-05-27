@@ -1,127 +1,77 @@
 import Link from "next/link";
-import React from "react";
+import { Heart } from "lucide-react";
+import { APP_NAME } from "@/constants";
+import { ROUTES } from "@/lib/routes";
+
+const FOOTER_LINKS = {
+  platform: [
+    { label: "Browse pets", href: ROUTES.pets },
+    { label: "Rehome a pet", href: ROUTES.newListing },
+    { label: "How it works", href: "/#how-it-works" },
+    { label: "Community", href: ROUTES.community },
+  ],
+  account: [
+    { label: "Sign up", href: ROUTES.signup },
+    { label: "Log in", href: ROUTES.login },
+    { label: "Your profile", href: ROUTES.profile },
+  ],
+};
 
 const Footer: React.FC = () => {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <Link href={"/"}>
-              <h3 className="text-2xl font-bold mb-4">Pet Pod</h3>
+    <footer className="border-t border-gray-200 bg-white">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
+          <div className="md:col-span-2">
+            <Link href={ROUTES.home} className="inline-flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500 to-purple-600">
+                <Heart className="h-5 w-5 text-white" aria-hidden />
+              </div>
+              <span className="text-lg font-bold text-gray-900">{APP_NAME}</span>
             </Link>
-            <p className="text-gray-400 mb-4 max-w-md">
-              A community-driven platform dedicated to giving pets a second
-              chance at life. We connect loving animals with responsible, caring
-              owners.
+            <p className="mt-4 max-w-md text-sm text-gray-600">
+              A safe, money-free space where pets find new homes through honest
+              conversations between people who care.
             </p>
-            <div className="flex space-x-4">
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                📘 Facebook
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                🐦 Twitter
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                📷 Instagram
-              </a>
-            </div>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Browse Pets
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  How It Works
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Success Stories
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Resources
-                </a>
-              </li>
+            <h4 className="text-sm font-semibold text-gray-900">Platform</h4>
+            <ul className="mt-4 space-y-2">
+              {FOOTER_LINKS.platform.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-600 transition-colors hover:text-pink-600"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Support */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Support</h4>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Help Center
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Contact Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Safety Guidelines
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  FAQ
-                </a>
-              </li>
+            <h4 className="text-sm font-semibold text-gray-900">Account</h4>
+            <ul className="mt-4 space-y-2">
+              {FOOTER_LINKS.account.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-600 transition-colors hover:text-pink-600"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400">
-            © 2024 Pet Pod. All rights reserved. Made with ❤️ for pets
-            everywhere.
-          </p>
+        <div className="mt-12 border-t border-gray-200 pt-6 text-center text-xs text-gray-500">
+          © {year} {APP_NAME}. Made with care for animals everywhere.
         </div>
       </div>
     </footer>

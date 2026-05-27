@@ -1,93 +1,137 @@
 "use client";
 
-import { Calendar, LucideIcon } from "lucide-react";
-import React, { useRef } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { cn } from "@/utils";
 
-interface InputProps {
+interface InputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   label?: string;
-  type?: "text" | "email" | "password" | "tel" | "date";
-  placeholder?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
-  required?: boolean;
-  disabled?: boolean;
-  className?: string;
-  name?: string;
-  id?: string;
+  hint?: string;
   icon?: LucideIcon;
+  rightSlot?: React.ReactNode;
+  containerClassName?: string;
+  /** Show "x / maxLength" counter beside the label. Requires `maxLength` to be set. */
+  showCount?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({
-  label,
-  type = "text",
-  placeholder,
-  value,
-  onChange,
-  error,
-  required = false,
-  disabled = false,
-  className = "",
-  name,
-  id,
-  icon: Icon,
-}) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const inputId =
-    id || name || `input-${Math.random().toString(36).substr(2, 9)}`;
+const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  {
+    label,
+    error,
+    hint,
+    icon: Icon,
+    rightSlot,
+    className,
+    containerClassName,
+    required,
+    showCount,
+    maxLength,
+    onChange,
+    id,
+    ...rest
+  },
+  ref,
+) {
+  const reactId = (rest as { id?: string }).id ?? undefined;
+  const generatedId = useFallbackId(id ?? reactId);
+  const inputId = id ?? generatedId;
+
+  const innerRef = useRef<HTMLInputElement | null>(null);
+  const [length, setLength] = useState(0);
+
+  // Sync initial length after mount (covers RHF defaultValues populating via ref).
+  useEffect(() => {
+    if (innerRef.current) setLength(innerRef.current.value.length);
+  }, []);
+
+  const setRef = useCallback(
+    (el: HTMLInputElement | null) => {
+      innerRef.current = el;
+      if (typeof ref === "function") ref(el);
+      else if (ref)
+        (ref as React.MutableRefObject<HTMLInputElement | null>).current = el;
+    },
+    [ref],
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (showCount && maxLength) setLength(e.target.value.length);
+    onChange?.(e);
+  };
+
+  const showCounter = showCount && typeof maxLength === "number";
 
   return (
-    <div className={`space-y-2 ${className}`}>
-      {label && (
-        <label
-          htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          {label}
-          {required && <span className="text-pink-500 ml-1">*</span>}
-        </label>
+    <div className={cn("space-y-1.5", containerClassName)}>
+      {(label || showCounter) && (
+        <div className="flex items-baseline justify-between gap-2">
+          {label ? (
+            <label
+              htmlFor={inputId}
+              className="block text-sm font-medium text-gray-800"
+            >
+              {label}
+              {required && <span className="ml-1 text-pink-500">*</span>}
+            </label>
+          ) : (
+            <span />
+          )}
+          {showCounter && (
+            <span
+              className={cn(
+                "text-xs tabular-nums",
+                length >= (maxLength ?? 0) ? "text-pink-600" : "text-gray-400",
+              )}
+            >
+              {length} / {maxLength}
+            </span>
+          )}
+        </div>
       )}
       <div
-        className="flex items-center px-3 gap-3 rounded-xl border-2 transition-all duration-300
-          focus-within:outline-none focus-within:ring-2 focus-within:ring-pink-500 focus-within:border-transparent hover:border-pink-300 hover:focus-within:border-transparent
-          disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100
-          dark:bg-gray-800 dark:text-white dark:border-gray-600"
+        className={cn(
+          "flex items-center gap-2 rounded-xl border-2 bg-white px-3 transition-all",
+          "focus-within:border-transparent focus-within:ring-2 focus-within:ring-pink-500",
+          error
+            ? "border-red-400"
+            : "border-gray-200 hover:border-pink-200",
+          rest.disabled && "cursor-not-allowed opacity-60",
+        )}
       >
-        {type === "date" ? (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.showPicker?.()}
-            className="rounded-full text-gray-400 hover:text-gray-200"
-          >
-            <Calendar className="w-4 h-4" />
-          </button>
-        ) : (
-          Icon && <Icon className="text-white/40 w-4 h-4" />
+        {Icon && (
+          <Icon className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
         )}
         <input
-          ref={inputRef}
+          ref={setRef}
           id={inputId}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
           required={required}
-          className={`w-full py-3 outline-0
-          ${
-            error
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 hover:border-pink-300 focus:border-pink-500"
-          }
-        `}
+          maxLength={maxLength}
+          onChange={handleChange}
+          className={cn(
+            "w-full bg-transparent py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none",
+            className,
+          )}
+          {...rest}
         />
+        {rightSlot && <div className="shrink-0">{rightSlot}</div>}
       </div>
-      {error && (
-        <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
-      )}
+      {error ? (
+        <p className="text-xs text-red-500">{error}</p>
+      ) : hint ? (
+        <p className="text-xs text-gray-500">{hint}</p>
+      ) : null}
     </div>
   );
-};
+});
+
+function useFallbackId(provided?: string) {
+  const fallback = useRef<string | undefined>(undefined);
+  if (!fallback.current) {
+    fallback.current = provided ?? `in-${Math.random().toString(36).slice(2, 9)}`;
+  }
+  return fallback.current;
+}
 
 export default Input;

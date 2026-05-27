@@ -1,112 +1,133 @@
-import React from "react";
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ChevronDown, Heart, PawPrint } from "lucide-react";
 import Button from "../ui/Button";
-import Carousel from "../ui/Carousel";
-import FloatingElements from "../ui/FloatingElements";
-import { ChevronDown } from "lucide-react";
+import { ROUTES } from "@/lib/routes";
+
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=2000&q=80";
 
 const HeroSection: React.FC = () => {
-  const carouselItems = [
-    {
-      id: 1,
-      imageSrc: "/assets/images/carousel1.jpg",
-      title: "Find Your Perfect Dog",
-      subtitle: "Loyal companions waiting for their forever home",
-    },
-    {
-      id: 2,
-      imageSrc: "/assets/images/carousel2.jpg",
-      title: "Adopt a Loving Cat",
-      subtitle: "Independent spirits ready to share their love",
-    },
-    {
-      id: 3,
-      imageSrc: "/assets/images/carousel3.jpg",
-      title: "Small Pets, Big Hearts",
-      subtitle: "Rabbits, hamsters, and more adorable companions",
-    },
-    {
-      id: 4,
-      imageSrc: "/assets/images/carousel4.jpg",
-      title: "Feathered Friends",
-      subtitle: "Birds and exotic pets looking for caring families",
-    },
-  ];
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.55, 0.85]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
-        <div className="absolute inset-0 bg-black/20"></div>
-      </div>
+    <section
+      ref={ref}
+      className="relative isolate h-[100svh] min-h-[640px] w-full overflow-hidden bg-gray-950"
+    >
+      <motion.div
+        style={{ y: imageY }}
+        className="absolute inset-0 z-0"
+        aria-hidden
+      >
+        <Image
+          src={HERO_IMAGE}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </motion.div>
 
-      {/* Floating Pet Elements */}
-      <FloatingElements />
+      <motion.div
+        style={{ opacity: overlayOpacity }}
+        className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/50 to-black/80"
+        aria-hidden
+      />
 
-      {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side - Text Content */}
-          <div className="text-white space-y-8 animate-fade-in">
-            <div>
-              <h1 className="text-5xl md:text-7xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  Pet Pod
-                </span>
-              </h1>
-              <p className="text-2xl md:text-3xl font-semibold mb-4 text-blue-100">
-                Giving pets a second chance at life
-              </p>
-              <p className="text-lg md:text-xl text-blue-100/80 max-w-lg">
-                Connect loving animals with responsible, caring owners. Create
-                lasting bonds while helping reduce pet abandonment in our
-                community.
-              </p>
-            </div>
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6 lg:px-8"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white/90 backdrop-blur"
+        >
+          <PawPrint className="h-3.5 w-3.5" aria-hidden />
+          <span>No money. Just love.</span>
+        </motion.div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="min-w-[200px] shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-              >
-                Find Your Perfect Pet
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="min-w-[200px] border-white text-white hover:bg-white hover:!text-blue-600 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-              >
-                List a Pet for Adoption
-              </Button>
-            </div>
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+        >
+          Every pet deserves
+          <span className="block bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 bg-clip-text text-transparent">
+            a second home.
+          </span>
+        </motion.h1>
 
-            <div className="flex items-center space-x-6 text-blue-100/80">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">✨</span>
-                <span>10,000+ Happy Families</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">🏆</span>
-                <span>98% Success Rate</span>
-              </div>
-            </div>
-          </div>
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 max-w-2xl text-base text-white/85 sm:text-lg md:text-xl"
+        >
+          Pet Pod connects people who can&apos;t keep their pets with people who
+          can. No marketplace, no fees — just honest conversations and safe
+          rehoming.
+        </motion.p>
 
-          {/* Right Side - Carousel */}
-          <div className="animate-fade-in-up">
-            <Carousel
-              items={carouselItems}
-              className="h-96 md:h-[500px] shadow-2xl"
-              autoPlay={true}
-              interval={4000}
-            />
-          </div>
-        </div>
-      </div>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4"
+        >
+          <Link href={ROUTES.pets} className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              icon={<Heart className="h-5 w-5" />}
+              className="w-full sm:w-auto sm:min-w-[200px]"
+            >
+              Browse pets
+            </Button>
+          </Link>
+          <Link href={ROUTES.newListing} className="w-full sm:w-auto">
+            <Button
+              variant="floating"
+              size="lg"
+              className="w-full sm:w-auto sm:min-w-[200px]"
+            >
+              Rehome a pet
+            </Button>
+          </Link>
+        </motion.div>
+      </motion.div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <ChevronDown className="w-8 h-8 text-white opacity-40" />
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 1 }}
+        className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 text-white/70"
+      >
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-1"
+        >
+          <span className="text-xs uppercase tracking-widest">Scroll</span>
+          <ChevronDown className="h-5 w-5" aria-hidden />
+        </motion.div>
+      </motion.div>
     </section>
   );
 };

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { FloatingNavbar } from "@/components";
+import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/constants";
+import { AuthProvider } from "@/lib/auth/AuthProvider";
+import { ChatProvider } from "@/lib/chat/ChatProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pet Pod - Giving Pets a Second Chance at Life",
-  description: "A community-driven platform dedicated to giving pets a second chance at life. We connect loving animals with responsible, caring owners.",
+  title: `${APP_NAME} — ${APP_TAGLINE}`,
+  description: APP_DESCRIPTION,
 };
 
 export default function RootLayout({
@@ -28,8 +32,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <FloatingNavbar />
-        {children}
+        <AuthProvider>
+          <ChatProvider>
+            <FloatingNavbar />
+            {children}
+            <Toaster position="top-center" richColors closeButton />
+          </ChatProvider>
+        </AuthProvider>
       </body>
     </html>
   );

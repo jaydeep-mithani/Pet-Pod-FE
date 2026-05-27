@@ -22,7 +22,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
 /* Chrome, Safari, Edge */
@@ -131,11 +131,3 @@ html {
   background: #a8a8a8;
 }
 
-.carousel-slide-button {
-  transition: opacity 300ms linear;
-  opacity: 0;
-}
-
-.carousel-component:hover > .carousel-slide-button {
-  opacity: 1;
-}

@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "../ui/Card";
 import Section from "../ui/Section";
-import { Quote, Star, Heart, Calendar } from "lucide-react";
+import { Quote, Star, Calendar } from "lucide-react";
 import Image from "next/image";
 
 const SuccessStoriesSection: React.FC = () => {
