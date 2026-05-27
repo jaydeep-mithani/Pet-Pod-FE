@@ -40,9 +40,13 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
   const [previewBlob, setPreviewBlob] = useState<string | null>(null);
   const blobRef = useRef<string | null>(null);
 
-  useEffect(() => {
+  // Reset to a changed initialUrl prop via React's "adjust state during render"
+  // pattern — avoids the extra paint a sync-in-effect would cause.
+  const [prevInitialUrl, setPrevInitialUrl] = useState(initialUrl);
+  if (initialUrl !== prevInitialUrl) {
+    setPrevInitialUrl(initialUrl);
     setUrl(initialUrl ?? null);
-  }, [initialUrl]);
+  }
 
   useEffect(() => {
     return () => {

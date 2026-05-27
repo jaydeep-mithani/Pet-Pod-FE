@@ -162,7 +162,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const [pending, setPending] = useState<PendingUpload[]>([]);
   const [removing, setRemoving] = useState<Set<string>>(new Set());
   const pendingRef = useRef<PendingUpload[]>([]);
-  pendingRef.current = pending;
+  useEffect(() => {
+    pendingRef.current = pending;
+  }, [pending]);
 
   useEffect(() => {
     return () => {

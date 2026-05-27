@@ -51,7 +51,9 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
   const lastManual = useRef<number>(0);
 
   const isControlled = typeof controlledIndex === "number";
-  const index = isControlled ? controlledIndex : internalIndex;
+  const rawIndex = isControlled ? controlledIndex : internalIndex;
+  // Clamp at read time so a shrinking `photos` array can't point past the end.
+  const index = photos.length > 0 ? Math.min(rawIndex ?? 0, photos.length - 1) : 0;
 
   const setIndex = useCallback(
     (next: number) => {
@@ -86,16 +88,14 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
     setIndex,
   ]);
 
-  // Reset if photos shrink past current index
-  useEffect(() => {
-    if (index >= photos.length && photos.length > 0) setIndex(0);
-  }, [photos.length, index, setIndex]);
-
   if (photos.length === 0) return null;
 
   const active = photos[index] ?? photos[0];
 
   const handleDotClick = (i: number) => {
+    // Date.now() in an event handler is allowed; the compiler rule can't tell
+    // this plain function is only ever called from onClick.
+    // eslint-disable-next-line react-hooks/purity
     lastManual.current = Date.now();
     setIndex(i);
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useId, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/utils";
 
@@ -127,11 +127,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 });
 
 function useFallbackId(provided?: string) {
-  const fallback = useRef<string | undefined>(undefined);
-  if (!fallback.current) {
-    fallback.current = provided ?? `in-${Math.random().toString(36).slice(2, 9)}`;
-  }
-  return fallback.current;
+  const generated = useId();
+  return provided ?? generated;
 }
 
 export default Input;
