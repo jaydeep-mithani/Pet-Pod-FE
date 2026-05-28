@@ -46,8 +46,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    void (async () => {
+      try {
+        const me = await authService.me();
+        setUser(me);
+        setStatus("authed");
+      } catch (err) {
+        setUser(null);
+        setStatus("guest");
+        if (!(err instanceof ApiError) || err.status !== 401) {
+          console.error("[AuthProvider] Session check failed:", err);
+        }
+      }
+    })();
+  }, []);
 
   const signup = useCallback(async (input: SignupInput) => {
     await authService.signup(input);
