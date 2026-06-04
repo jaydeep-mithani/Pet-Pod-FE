@@ -18,9 +18,9 @@ export default function ChatListPage() {
   const status = useRequireAuth();
   const { user } = useAuth();
   const { unreadByConv, onlineUserIds, onMessage } = useChat();
-  const [conversations, setConversations] = useState<ConversationListItem[] | null>(
-    null,
-  );
+  const [conversations, setConversations] = useState<
+    ConversationListItem[] | null
+  >(null);
 
   // Refresh the list whenever a new message arrives (cheap; the user just
   // sees the latest activity bubble up).
@@ -105,8 +105,7 @@ const ConversationRow: React.FC<ConversationRowProps> = ({
   onlineUserIds,
 }) => {
   const router = useRouter();
-  const otherUser =
-    conv.ownerId === currentUserId ? conv.adopter : conv.owner;
+  const otherUser = conv.ownerId === currentUserId ? conv.adopter : conv.owner;
   const cover = conv.pet.photos[0]?.url;
   const lastMsg = conv.messages[0];
   const snippet = lastMsg
@@ -174,9 +173,7 @@ const ConversationRow: React.FC<ConversationRowProps> = ({
             <p
               className={cn(
                 "truncate text-sm",
-                hasUnread
-                  ? "font-semibold text-gray-900"
-                  : "text-gray-600",
+                hasUnread ? "font-semibold text-gray-900" : "text-gray-600",
               )}
             >
               {snippet}

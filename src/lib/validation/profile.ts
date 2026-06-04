@@ -9,11 +9,7 @@ const trimmedOptional = (max: number, msg = "Too long") =>
     .or(z.literal("").transform(() => undefined));
 
 export const profileSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "At least 2 characters")
-    .max(60, "Too long"),
+  name: z.string().trim().min(2, "At least 2 characters").max(60, "Too long"),
   bio: trimmedOptional(500),
   city: trimmedOptional(100),
   region: trimmedOptional(100),

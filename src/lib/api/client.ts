@@ -35,7 +35,10 @@ interface RequestInitJson extends Omit<RequestInit, "body" | "headers"> {
   headers?: Record<string, string>;
 }
 
-async function rawFetch(path: string, init: RequestInitJson): Promise<Response> {
+async function rawFetch(
+  path: string,
+  init: RequestInitJson,
+): Promise<Response> {
   const { body, headers, ...rest } = init;
   return fetch(fullUrl(path), {
     ...rest,

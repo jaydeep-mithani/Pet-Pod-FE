@@ -12,10 +12,7 @@ import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { usersService } from "@/lib/services/users.service";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES } from "@/lib/routes";
-import {
-  profileSchema,
-  type ProfileValues,
-} from "@/lib/validation/profile";
+import { profileSchema, type ProfileValues } from "@/lib/validation/profile";
 
 export default function ProfilePage() {
   const status = useRequireAuth();
@@ -101,7 +98,8 @@ export default function ProfilePage() {
             Your profile
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            This is what other Pet Pod members see when you start a conversation.
+            This is what other Pet Pod members see when you start a
+            conversation.
           </p>
         </div>
       </section>

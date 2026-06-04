@@ -29,7 +29,9 @@ const Footer: React.FC = () => {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500 to-purple-600">
                 <Heart className="h-5 w-5 text-white" aria-hidden />
               </div>
-              <span className="text-lg font-bold text-gray-900">{APP_NAME}</span>
+              <span className="text-lg font-bold text-gray-900">
+                {APP_NAME}
+              </span>
             </Link>
             <p className="mt-4 max-w-md text-sm text-gray-600">
               A safe, money-free space where pets find new homes through honest

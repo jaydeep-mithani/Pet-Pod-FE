@@ -9,8 +9,10 @@ interface SelectOption {
   label: string;
 }
 
-interface SelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
+interface SelectProps extends Omit<
+  React.SelectHTMLAttributes<HTMLSelectElement>,
+  "size"
+> {
   label?: string;
   error?: string;
   hint?: string;

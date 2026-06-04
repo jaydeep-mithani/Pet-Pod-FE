@@ -54,8 +54,7 @@ export const petsService = {
   list: (query: PetListQuery = {}) =>
     api.get<PetListItem[]>(`/pets${buildQuery(query)}`),
 
-  listFeatured: (limit = 6) =>
-    api.get<PetListItem[]>(`/pets?limit=${limit}`),
+  listFeatured: (limit = 6) => api.get<PetListItem[]>(`/pets?limit=${limit}`),
 
   listMine: () => api.get<PetListItem[]>("/pets/mine"),
 

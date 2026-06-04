@@ -6,8 +6,10 @@ import { cn } from "@/utils";
 
 type Variant = "default" | "primary" | "danger";
 
-interface IconButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+interface IconButtonProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> {
   icon: LucideIcon;
   label: string;
   variant?: Variant;
@@ -24,8 +26,18 @@ const variantStyles: Record<Variant, string> = {
 };
 
 const sizeStyles = {
-  sm: { box: "h-8", icon: "h-4 w-4", text: "text-xs", pad: "px-2 group-hover:pr-3" },
-  md: { box: "h-10", icon: "h-4 w-4", text: "text-sm", pad: "px-2.5 group-hover:pr-3.5" },
+  sm: {
+    box: "h-8",
+    icon: "h-4 w-4",
+    text: "text-xs",
+    pad: "px-2 group-hover:pr-3",
+  },
+  md: {
+    box: "h-10",
+    icon: "h-4 w-4",
+    text: "text-sm",
+    pad: "px-2.5 group-hover:pr-3.5",
+  },
 } as const;
 
 const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(

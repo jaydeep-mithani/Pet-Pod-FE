@@ -37,9 +37,9 @@ export const STATUS_LABEL: Record<PetStatus, string> = {
   ADOPTED: "Adopted",
 };
 
-export const SPECIES_OPTIONS = (
-  Object.keys(SPECIES_LABEL) as PetSpecies[]
-).map((value) => ({ value, label: SPECIES_LABEL[value] }));
+export const SPECIES_OPTIONS = (Object.keys(SPECIES_LABEL) as PetSpecies[]).map(
+  (value) => ({ value, label: SPECIES_LABEL[value] }),
+);
 
 export const SIZE_OPTIONS = (Object.keys(SIZE_LABEL) as PetSize[]).map(
   (value) => ({ value, label: SIZE_LABEL[value] }),

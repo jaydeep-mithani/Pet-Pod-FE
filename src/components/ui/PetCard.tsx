@@ -67,7 +67,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, priority, className }) => {
 
         <div className="flex flex-1 flex-col gap-2 p-4">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="text-lg font-semibold text-gray-900">{displayName}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {displayName}
+            </h3>
             <span className="text-sm text-gray-500">
               {formatPetAge(pet.ageMonths)}
             </span>

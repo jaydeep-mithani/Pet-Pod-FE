@@ -114,14 +114,7 @@ export default function ConversationDetailPage() {
         void markRead(conversationId);
       }
     });
-  }, [
-    conversationId,
-    status,
-    user?.id,
-    onMessage,
-    markRead,
-    markDelivered,
-  ]);
+  }, [conversationId, status, user?.id, onMessage, markRead, markDelivered]);
 
   // Delivered event → flip gray double-check.
   useEffect(() => {
@@ -202,7 +195,10 @@ export default function ConversationDetailPage() {
       emitTyping(conversationId, true);
     }
     if (typingStopTimerRef.current) clearTimeout(typingStopTimerRef.current);
-    typingStopTimerRef.current = setTimeout(sendTypingStop, TYPING_STOP_AFTER_MS);
+    typingStopTimerRef.current = setTimeout(
+      sendTypingStop,
+      TYPING_STOP_AFTER_MS,
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -360,7 +356,8 @@ export default function ConversationDetailPage() {
           {messages.length === 0 && (
             <div className="mx-auto max-w-sm rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-gray-200">
               <p className="text-sm text-gray-600">
-                Say hi to {otherUser ? firstName(otherUser) : "the owner"} about {petLabel}.
+                Say hi to {otherUser ? firstName(otherUser) : "the owner"} about{" "}
+                {petLabel}.
               </p>
             </div>
           )}
@@ -368,7 +365,8 @@ export default function ConversationDetailPage() {
           {messages.map((msg, i) => {
             const mine = msg.senderId === user.id;
             const prev = messages[i - 1];
-            const showAvatar = !mine && (!prev || prev.senderId !== msg.senderId);
+            const showAvatar =
+              !mine && (!prev || prev.senderId !== msg.senderId);
             const showTime =
               !prev ||
               new Date(msg.createdAt).getTime() -

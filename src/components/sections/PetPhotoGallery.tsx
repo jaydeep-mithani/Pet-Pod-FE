@@ -55,7 +55,9 @@ const PetPhotoGallery: React.FC<PetPhotoGalleryProps> = ({ photos, alt }) => {
                   sizes="(min-width: 1024px) 10vw, 20vw"
                   className={cn(
                     "object-cover transition-opacity",
-                    i === index ? "opacity-100" : "opacity-80 hover:opacity-100",
+                    i === index
+                      ? "opacity-100"
+                      : "opacity-80 hover:opacity-100",
                   )}
                 />
               </button>
