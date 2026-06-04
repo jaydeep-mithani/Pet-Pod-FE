@@ -104,10 +104,14 @@ const CommunityStatsSection: React.FC = () => {
               className="text-center group relative overflow-hidden bg-white/80 backdrop-blur-sm"
             >
               {/* Card background gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+              ></div>
 
               <div className="relative z-10">
-                <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                <div
+                  className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                >
                   <stat.icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -131,8 +135,8 @@ const CommunityStatsSection: React.FC = () => {
               Community Achievements
             </h3>
             <p className="text-blue-100 text-lg max-w-2xl mx-auto">
-              Our community has achieved remarkable milestones in pet welfare and
-              adoption success.
+              Our community has achieved remarkable milestones in pet welfare
+              and adoption success.
             </p>
           </div>
 
@@ -148,9 +152,7 @@ const CommunityStatsSection: React.FC = () => {
                     <h4 className="text-xl font-semibold mb-2">
                       {achievement.title}
                     </h4>
-                    <p className="text-blue-100">
-                      {achievement.description}
-                    </p>
+                    <p className="text-blue-100">{achievement.description}</p>
                   </div>
                 </div>
               </div>

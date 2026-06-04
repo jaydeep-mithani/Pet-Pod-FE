@@ -4,17 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Calendar, MapPin } from "lucide-react";
-import {
-  Footer,
-  PetCard,
-  PetCardSkeleton,
-  UserAvatar,
-} from "@/components";
+import { Footer, PetCard, PetCardSkeleton, UserAvatar } from "@/components";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import {
-  usersService,
-  type PublicUser,
-} from "@/lib/services/users.service";
+import { usersService, type PublicUser } from "@/lib/services/users.service";
 import { petsService } from "@/lib/services";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES } from "@/lib/routes";

@@ -53,7 +53,8 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
   const isControlled = typeof controlledIndex === "number";
   const rawIndex = isControlled ? controlledIndex : internalIndex;
   // Clamp at read time so a shrinking `photos` array can't point past the end.
-  const index = photos.length > 0 ? Math.min(rawIndex ?? 0, photos.length - 1) : 0;
+  const index =
+    photos.length > 0 ? Math.min(rawIndex ?? 0, photos.length - 1) : 0;
 
   const setIndex = useCallback(
     (next: number) => {
@@ -71,7 +72,9 @@ const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
       const recentlyTouched = now - lastManual.current < manualPauseMs;
       if (recentlyTouched) return;
       if (pauseOnHover && hovering) return;
-      const next = ((isControlled ? (controlledIndex ?? 0) : internalIndex) + 1) % photos.length;
+      const next =
+        ((isControlled ? (controlledIndex ?? 0) : internalIndex) + 1) %
+        photos.length;
       setIndex(next);
     }, autoplayMs);
     return () => window.clearInterval(timer);

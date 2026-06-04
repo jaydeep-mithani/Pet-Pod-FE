@@ -51,7 +51,10 @@ export const petFormSchema = z
 
 export type PetFormValues = z.infer<typeof petFormSchema>;
 
-export function ageMonthsFrom(values: { years: number; months: number }): number {
+export function ageMonthsFrom(values: {
+  years: number;
+  months: number;
+}): number {
   return values.years * 12 + values.months;
 }
 

@@ -26,8 +26,8 @@ const PageShell = ({ children }: { children: React.ReactNode }) => (
           Share their story
         </h1>
         <p className="mt-2 max-w-xl text-base text-gray-600">
-          Honesty is the most important thing. Tell adopters what your pet
-          is like and why they need a new home.
+          Honesty is the most important thing. Tell adopters what your pet is
+          like and why they need a new home.
         </p>
       </div>
     </section>

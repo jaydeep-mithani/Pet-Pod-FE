@@ -2,7 +2,16 @@ import React from "react";
 import Card from "../ui/Card";
 import Section from "../ui/Section";
 import Button from "../ui/Button";
-import { Calendar, MapPin, Users, Clock, Heart, Camera, BookOpen, PawPrint } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Heart,
+  Camera,
+  BookOpen,
+  PawPrint,
+} from "lucide-react";
 
 const CommunityEventsSection: React.FC = () => {
   const upcomingEvents = [
@@ -12,7 +21,8 @@ const CommunityEventsSection: React.FC = () => {
       date: "March 15, 2024",
       time: "10:00 AM - 4:00 PM",
       location: "Central Park, San Francisco",
-      description: "Join us for our biggest adoption event of the year! Meet over 100 pets looking for their forever homes.",
+      description:
+        "Join us for our biggest adoption event of the year! Meet over 100 pets looking for their forever homes.",
       attendees: 250,
       type: "Adoption Event",
       icon: Heart,
@@ -25,7 +35,8 @@ const CommunityEventsSection: React.FC = () => {
       date: "March 22, 2024",
       time: "2:00 PM - 5:00 PM",
       location: "Golden Gate Park",
-      description: "Learn professional pet photography techniques from award-winning photographer Sarah Johnson.",
+      description:
+        "Learn professional pet photography techniques from award-winning photographer Sarah Johnson.",
       attendees: 30,
       type: "Workshop",
       icon: Camera,
@@ -38,7 +49,8 @@ const CommunityEventsSection: React.FC = () => {
       date: "March 29, 2024",
       time: "6:00 PM - 8:00 PM",
       location: "Community Center, Oakland",
-      description: "Essential pet care tips from veterinarians and pet behavior specialists.",
+      description:
+        "Essential pet care tips from veterinarians and pet behavior specialists.",
       attendees: 80,
       type: "Education",
       icon: BookOpen,
@@ -51,7 +63,8 @@ const CommunityEventsSection: React.FC = () => {
       date: "April 5, 2024",
       time: "11:00 AM - 2:00 PM",
       location: "Crissy Field, San Francisco",
-      description: "A fun social event for pets and their owners. Games, treats, and new friendships await!",
+      description:
+        "A fun social event for pets and their owners. Games, treats, and new friendships await!",
       attendees: 120,
       type: "Social",
       icon: PawPrint,
@@ -123,7 +136,9 @@ const CommunityEventsSection: React.FC = () => {
               className="text-center group relative overflow-hidden bg-white/80 backdrop-blur-sm"
             >
               <div className="p-6">
-                <div className={`w-12 h-12 mx-auto mb-4 rounded-full ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                <div
+                  className={`w-12 h-12 mx-auto mb-4 rounded-full ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                >
                   <category.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -145,14 +160,14 @@ const CommunityEventsSection: React.FC = () => {
           <h3 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">
             Upcoming Events
           </h3>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {upcomingEvents.map((event) => (
               <Card
                 key={event.id}
                 hover
                 className={`group relative overflow-hidden bg-white/90 backdrop-blur-sm ${
-                  event.featured ? 'ring-2 ring-pink-500' : ''
+                  event.featured ? "ring-2 ring-pink-500" : ""
                 }`}
               >
                 {event.featured && (
@@ -162,10 +177,12 @@ const CommunityEventsSection: React.FC = () => {
                     </span>
                   </div>
                 )}
-                
+
                 <div className="p-6">
                   <div className="flex items-start space-x-4 mb-4">
-                    <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${event.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                    <div
+                      className={`w-12 h-12 rounded-full bg-gradient-to-br ${event.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                    >
                       <event.icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
@@ -216,9 +233,7 @@ const CommunityEventsSection: React.FC = () => {
         {/* Call to Action */}
         <div className="text-center">
           <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-8 max-w-4xl mx-auto text-white">
-            <h3 className="text-3xl font-bold mb-4">
-              Host Your Own Event
-            </h3>
+            <h3 className="text-3xl font-bold mb-4">Host Your Own Event</h3>
             <p className="text-green-100 mb-6 text-lg">
               Want to organize a pet-related event? We&apos;d love to help you
               connect with our community and make a positive impact.

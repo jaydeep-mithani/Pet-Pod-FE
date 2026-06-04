@@ -22,7 +22,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { GripVertical, ImagePlus, Loader2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
-import { uploadsService, type UploadedPhoto } from "@/lib/services/uploads.service";
+import {
+  uploadsService,
+  type UploadedPhoto,
+} from "@/lib/services/uploads.service";
 import { ApiError } from "@/lib/api/errors";
 import { cn } from "@/utils";
 
@@ -71,8 +74,7 @@ const ACCEPT = {
   "image/avif": [],
 };
 
-const keyFor = (photo: PhotoEntry) =>
-  photo.id ?? photo.publicId ?? photo.url;
+const keyFor = (photo: PhotoEntry) => photo.id ?? photo.publicId ?? photo.url;
 
 interface SortableTileProps {
   photo: PhotoEntry;
@@ -199,7 +201,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         const uploaded: UploadedPhoto = await uploadsService.uploadToCloudinary(
           entry.file,
           signature,
-          (fraction) => setPendingProgress(entry.localId, { progress: fraction }),
+          (fraction) =>
+            setPendingProgress(entry.localId, { progress: fraction }),
         );
 
         const finalEntry: PhotoEntry = onAdd

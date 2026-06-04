@@ -30,7 +30,9 @@ const MessageOwnerButton: React.FC<MessageOwnerButtonProps> = ({
 
   const handleClick = async () => {
     if (status !== "authed") {
-      router.push(`${ROUTES.login}?next=${encodeURIComponent(ROUTES.petDetail(petId))}`);
+      router.push(
+        `${ROUTES.login}?next=${encodeURIComponent(ROUTES.petDetail(petId))}`,
+      );
       return;
     }
     setBusy(true);
@@ -39,7 +41,9 @@ const MessageOwnerButton: React.FC<MessageOwnerButtonProps> = ({
       router.push(`${ROUTES.chat}/${conv.id}`);
     } catch (err) {
       const msg =
-        err instanceof ApiError ? err.message : "Couldn't start the conversation.";
+        err instanceof ApiError
+          ? err.message
+          : "Couldn't start the conversation.";
       toast.error(msg);
       setBusy(false);
     }

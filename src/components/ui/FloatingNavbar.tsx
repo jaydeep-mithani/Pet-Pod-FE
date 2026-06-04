@@ -141,12 +141,18 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
             ) : (
               <>
                 <Link href={ROUTES.login}>
-                  <Button variant={isScrolled ? "ghost" : "secondary"} size="sm">
+                  <Button
+                    variant={isScrolled ? "ghost" : "secondary"}
+                    size="sm"
+                  >
                     Log in
                   </Button>
                 </Link>
                 <Link href={ROUTES.signup}>
-                  <Button variant={isScrolled ? "floating" : "primary"} size="sm">
+                  <Button
+                    variant={isScrolled ? "floating" : "primary"}
+                    size="sm"
+                  >
                     Sign up
                   </Button>
                 </Link>
@@ -240,7 +246,11 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
               </div>
             ) : status === "guest" ? (
               <>
-                <Link href={ROUTES.signup} onClick={closeMobile} className="block">
+                <Link
+                  href={ROUTES.signup}
+                  onClick={closeMobile}
+                  className="block"
+                >
                   <Button
                     variant={isScrolled ? "floating" : "primary"}
                     size="md"
@@ -249,7 +259,11 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
                     Sign up
                   </Button>
                 </Link>
-                <Link href={ROUTES.login} onClick={closeMobile} className="block">
+                <Link
+                  href={ROUTES.login}
+                  onClick={closeMobile}
+                  className="block"
+                >
                   <Button
                     variant={isScrolled ? "ghost" : "secondary"}
                     size="md"

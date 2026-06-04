@@ -37,7 +37,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
         style={{ backgroundImage: `url(${heroImageUrl})` }}
         aria-hidden
       />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/40 to-black/80 lg:hidden" aria-hidden />
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/40 to-black/80 lg:hidden"
+        aria-hidden
+      />
 
       <aside
         className="relative hidden flex-1 overflow-hidden bg-cover bg-center lg:block"
@@ -61,9 +64,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             </h1>
             <p className="mt-4 text-base text-white/85">{heroSubtitle}</p>
           </div>
-          <p className="text-xs text-white/60">
-            No money. Just love.
-          </p>
+          <p className="text-xs text-white/60">No money. Just love.</p>
         </div>
       </aside>
 

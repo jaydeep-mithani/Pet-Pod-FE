@@ -32,7 +32,9 @@ export const conversationsService = {
   getById: (id: string) => api.get<Conversation>(`/conversations/${id}`),
 
   listMessages: (id: string, q: ListMessagesQuery = {}) =>
-    api.get<MessagesPage>(`/conversations/${id}/messages${buildMessageQuery(q)}`),
+    api.get<MessagesPage>(
+      `/conversations/${id}/messages${buildMessageQuery(q)}`,
+    ),
 
   sendMessage: (id: string, input: SendMessageInput) =>
     api.post<Message>(`/conversations/${id}/messages`, input),

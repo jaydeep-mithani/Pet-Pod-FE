@@ -63,7 +63,9 @@ export const uploadsService = {
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
-            const data = JSON.parse(xhr.responseText) as CloudinaryUploadResponse;
+            const data = JSON.parse(
+              xhr.responseText,
+            ) as CloudinaryUploadResponse;
             resolve({
               url: data.secure_url,
               publicId: data.public_id,

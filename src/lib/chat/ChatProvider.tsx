@@ -196,10 +196,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       setOnlineUserIds(new Set(snap.userIds));
     };
 
-    const setTyping = (
-      event: TypingEvent,
-      typing: boolean,
-    ) => {
+    const setTyping = (event: TypingEvent, typing: boolean) => {
       setTypingByConv((curr) => {
         const set = new Set(curr[event.conversationId] ?? []);
         if (typing) set.add(event.userId);
@@ -288,13 +285,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const emitTyping = useCallback(
-    (conversationId: string, typing: boolean) => {
-      const socket = getSocket();
-      socket.emit(typing ? "typing:start" : "typing:stop", { conversationId });
-    },
-    [],
-  );
+  const emitTyping = useCallback((conversationId: string, typing: boolean) => {
+    const socket = getSocket();
+    socket.emit(typing ? "typing:start" : "typing:stop", { conversationId });
+  }, []);
 
   const totalUnread = useMemo(
     () => Object.values(unreadByConv).reduce((a, b) => a + b, 0),

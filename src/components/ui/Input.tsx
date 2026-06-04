@@ -1,11 +1,20 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/utils";
 
-interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+interface InputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   label?: string;
   error?: string;
   hint?: string;
@@ -94,9 +103,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         className={cn(
           "flex items-center gap-2 rounded-xl border-2 bg-white px-3 transition-all",
           "focus-within:border-transparent focus-within:ring-2 focus-within:ring-pink-500",
-          error
-            ? "border-red-400"
-            : "border-gray-200 hover:border-pink-200",
+          error ? "border-red-400" : "border-gray-200 hover:border-pink-200",
           rest.disabled && "cursor-not-allowed opacity-60",
         )}
       >

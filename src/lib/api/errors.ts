@@ -15,6 +15,7 @@ export class ApiError extends Error {
 function extractFieldErrors(data: unknown): string[] {
   if (!data || typeof data !== "object") return [];
   const maybe = (data as { message?: unknown }).message;
-  if (Array.isArray(maybe)) return maybe.filter((m): m is string => typeof m === "string");
+  if (Array.isArray(maybe))
+    return maybe.filter((m): m is string => typeof m === "string");
   return [];
 }
