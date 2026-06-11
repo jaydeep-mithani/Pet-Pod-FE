@@ -16,7 +16,7 @@ interface ButtonProps {
   iconPosition?: "left" | "right";
 }
 
-const MAGNETIC_RANGE = 8;
+const MAGNETIC_RANGE = 16;
 
 const Button: React.FC<ButtonProps> = ({
   children,
@@ -38,16 +38,17 @@ const Button: React.FC<ButtonProps> = ({
     tokens.magnetic && (size === "lg" || size === "xl") && !disabled;
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const magneticX = useSpring(mx, { stiffness: 260, damping: 18 });
-  const magneticY = useSpring(my, { stiffness: 260, damping: 18 });
+  // Soft, wobbly springs so the pull feels elastic rather than mechanical.
+  const magneticX = useSpring(mx, { stiffness: 200, damping: 14 });
+  const magneticY = useSpring(my, { stiffness: 200, damping: 14 });
 
   const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!magneticEnabled || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const relX = e.clientX - rect.left - rect.width / 2;
     const relY = e.clientY - rect.top - rect.height / 2;
-    mx.set(Math.max(-MAGNETIC_RANGE, Math.min(MAGNETIC_RANGE, relX * 0.2)));
-    my.set(Math.max(-MAGNETIC_RANGE, Math.min(MAGNETIC_RANGE, relY * 0.2)));
+    mx.set(Math.max(-MAGNETIC_RANGE, Math.min(MAGNETIC_RANGE, relX * 0.38)));
+    my.set(Math.max(-MAGNETIC_RANGE, Math.min(MAGNETIC_RANGE, relY * 0.38)));
   };
 
   const handlePointerLeave = () => {
@@ -55,8 +56,16 @@ const Button: React.FC<ButtonProps> = ({
     my.set(0);
   };
 
-  const baseClasses =
-    "font-semibold rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2";
+  // Shape is part of each vibe's identity: playful = pill, calm = quiet
+  // rectangle, bold = sharp skewed parallelogram (content counter-skewed).
+  const shapeClasses =
+    vibe === "bold"
+      ? "rounded-[3px] -skew-x-6"
+      : vibe === "calm"
+        ? "rounded-lg"
+        : "rounded-full";
+
+  const baseClasses = `font-semibold ${shapeClasses} transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2`;
 
   // Calm trades gradients and glow for flat, deep teal — quiet confidence.
   const variantClasses =
@@ -96,8 +105,9 @@ const Button: React.FC<ButtonProps> = ({
   const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
   const renderContent = () => {
-    if (!icon) return children;
-    return iconPosition === "left" ? (
+    const content = !icon ? (
+      children
+    ) : iconPosition === "left" ? (
       <>
         {icon}
         {children}
@@ -107,6 +117,19 @@ const Button: React.FC<ButtonProps> = ({
         {children}
         {icon}
       </>
+    );
+    // Counter-skew the label so bold's parallelogram shape doesn't slant
+    // the text itself.
+    return (
+      <span
+        className={
+          vibe === "bold"
+            ? "inline-flex skew-x-6 items-center gap-2"
+            : "inline-flex items-center gap-2"
+        }
+      >
+        {content}
+      </span>
     );
   };
 
