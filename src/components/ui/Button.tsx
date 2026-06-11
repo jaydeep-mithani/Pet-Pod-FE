@@ -58,9 +58,13 @@ const Button: React.FC<ButtonProps> = ({
 
   // Shape is part of each vibe's identity: playful = pill, calm = quiet
   // rectangle, bold = sharp skewed parallelogram (content counter-skewed).
+  // Bold's skew is applied through framer's style (not a Tailwind class):
+  // hover/tap gestures animate `transform`, and framer only composes the
+  // skew with those gestures when it owns the value — a class-based skew
+  // gets overwritten on first hover and the shape snaps rectangular.
   const shapeClasses =
     vibe === "bold"
-      ? "rounded-[3px] -skew-x-6"
+      ? "rounded-[3px]"
       : vibe === "calm"
         ? "rounded-lg"
         : "rounded-full";
@@ -142,7 +146,10 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       onPointerMove={magneticEnabled ? handlePointerMove : undefined}
       onPointerLeave={magneticEnabled ? handlePointerLeave : undefined}
-      style={magneticEnabled ? { x: magneticX, y: magneticY } : undefined}
+      style={{
+        ...(magneticEnabled ? { x: magneticX, y: magneticY } : {}),
+        ...(vibe === "bold" ? { skewX: -6 } : {}),
+      }}
       whileHover={
         disabled
           ? undefined

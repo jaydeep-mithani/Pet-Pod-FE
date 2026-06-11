@@ -436,6 +436,15 @@ html.vibe-bold select {
     pointer;
 }
 
+/* Explicit-white text must survive both theme layers' hue remaps. A button
+   that says text-white means it (e.g. ghost CTAs on gradient sections) —
+   the remapped .text-pink-* selectors tie on specificity, so this block
+   must come after both layers to win on source order. */
+html.vibe-calm .text-white,
+html.vibe-bold .text-white {
+  color: #ffffff;
+}
+
 /* Frosted-glass surface — pair with a ring/border utility at the callsite */
 .glass {
   background: rgba(255, 255, 255, 0.65);

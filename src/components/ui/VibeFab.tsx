@@ -79,7 +79,7 @@ const VibeFab: React.FC = () => {
         {open && (
           <motion.button
             type="button"
-            aria-label="Close animation style picker"
+            aria-label="Close theme picker"
             className="fixed inset-0 -z-10 cursor-default"
             onClick={() => {
               dismissTip();
@@ -92,7 +92,7 @@ const VibeFab: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div role="group" aria-label="Animation style">
+      <div role="group" aria-label="Theme">
         <AnimatePresence>
           {open &&
             MOTION_VIBES.map((v, i) => {
@@ -103,13 +103,16 @@ const VibeFab: React.FC = () => {
                 <motion.button
                   key={v}
                   type="button"
-                  aria-label={`${VIBE_LABEL[v]} animations`}
+                  aria-label={`${VIBE_LABEL[v]} theme`}
                   aria-pressed={active}
                   onClick={() => handleSelect(v)}
                   onPointerEnter={() => scheduleTip(v)}
                   onPointerLeave={dismissTip}
                   className={cn(
                     "absolute inset-0 flex h-12 w-12 items-center justify-center rounded-full shadow-lg",
+                    // Later siblings paint on top; lift the hovered button so
+                    // its speech bubble isn't covered by neighbours.
+                    tip === v && "z-30",
                     active
                       ? "bg-gradient-to-br from-pink-500 to-purple-600 text-white ring-2 ring-white"
                       : "bg-white text-gray-700 ring-1 ring-gray-200 hover:text-pink-600 hover:ring-pink-300",
@@ -153,7 +156,7 @@ const VibeFab: React.FC = () => {
                         }}
                         className="pointer-events-none absolute right-[calc(100%+12px)] top-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl"
                       >
-                        {VIBE_LABEL[v]} animations
+                        {VIBE_LABEL[v]}
                         <span
                           className="absolute left-full top-1/2 -mt-1 border-4 border-transparent border-l-gray-900"
                           aria-hidden
@@ -175,8 +178,8 @@ const VibeFab: React.FC = () => {
           aria-expanded={open}
           aria-label={
             open
-              ? "Close animation style picker"
-              : `Animation style: ${VIBE_LABEL[vibe]}. Open picker`
+              ? "Close theme picker"
+              : `Theme: ${VIBE_LABEL[vibe]}. Open picker`
           }
           className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 text-white shadow-[0_8px_32px_-8px_rgba(236,72,153,0.55)]"
           whileHover={{ scale: 1.08 }}
