@@ -10,6 +10,7 @@ import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { authService } from "@/lib/services/auth.service";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES, postAuthRedirect } from "@/lib/routes";
+import { celebrate } from "@/lib/motion";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 const CODE_LENGTH = 6;
@@ -100,6 +101,7 @@ function VerifyEmailContent() {
       await authService.checkVerificationCode(code);
       await refresh();
       toast.success("Email verified.");
+      celebrate();
       // Route resolution happens via the verified-redirect effect above
       // once `refresh()` flips user.emailVerified.
     } catch (err) {

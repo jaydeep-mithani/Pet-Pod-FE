@@ -7,8 +7,12 @@ import {
   useMotionValue,
   useSpring,
 } from "framer-motion";
-import { PawPrint } from "lucide-react";
-import { useMotionVibe } from "@/lib/motion";
+import { Heart, PawPrint } from "lucide-react";
+import {
+  CELEBRATE_EVENT,
+  useMotionVibe,
+  type CelebrateDetail,
+} from "@/lib/motion";
 
 interface Stamp {
   id: number;
@@ -35,9 +39,109 @@ const VibeEffectsLayer: React.FC = () => {
   const { vibe, tokens } = useMotionVibe();
 
   if (!tokens.flourish) return null;
-  if (vibe === "playful") return <PawStamps />;
+  if (vibe === "playful") {
+    return (
+      <>
+        <PawStamps />
+        <CelebrationBursts />
+      </>
+    );
+  }
   if (vibe === "bold") return <BoldCursorLayer />;
   return null;
+};
+
+interface BurstParticle {
+  id: number;
+  originX: number;
+  originY: number;
+  dx: number;
+  dy: number;
+  rotate: number;
+  scale: number;
+  kind: "heart" | "paw";
+}
+
+let burstId = 0;
+const BURST_SIZE = 12;
+
+/** Heart/paw explosion fired via the celebrate() helper on happy moments. */
+const CelebrationBursts: React.FC = () => {
+  const [particles, setParticles] = useState<BurstParticle[]>([]);
+
+  useEffect(() => {
+    const onCelebrate = (e: Event) => {
+      const detail = (e as CustomEvent<CelebrateDetail>).detail ?? {};
+      const originX = detail.x ?? window.innerWidth / 2;
+      const originY = detail.y ?? window.innerHeight * 0.35;
+
+      const burst: BurstParticle[] = Array.from(
+        { length: BURST_SIZE },
+        (_, i) => {
+          const angle = (i / BURST_SIZE) * Math.PI * 2 + Math.random() * 0.5;
+          const distance = 70 + Math.random() * 90;
+          return {
+            id: burstId++,
+            originX,
+            originY,
+            dx: Math.cos(angle) * distance,
+            dy: Math.sin(angle) * distance - 40,
+            rotate: Math.random() * 180 - 90,
+            scale: 0.7 + Math.random() * 0.7,
+            kind: Math.random() > 0.4 ? "heart" : "paw",
+          };
+        },
+      );
+      setParticles((curr) => [...curr.slice(-BURST_SIZE), ...burst]);
+    };
+
+    window.addEventListener(CELEBRATE_EVENT, onCelebrate);
+    return () => window.removeEventListener(CELEBRATE_EVENT, onCelebrate);
+  }, []);
+
+  const removeParticle = (id: number) => {
+    setParticles((curr) => curr.filter((p) => p.id !== id));
+  };
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[55]" aria-hidden>
+      <AnimatePresence>
+        {particles.map((p) => (
+          <motion.div
+            key={p.id}
+            className={
+              p.kind === "heart"
+                ? "absolute text-pink-500"
+                : "absolute text-purple-500"
+            }
+            style={{ left: p.originX, top: p.originY }}
+            initial={{
+              opacity: 1,
+              x: "-50%",
+              y: "-50%",
+              scale: 0.3,
+              rotate: 0,
+            }}
+            animate={{
+              opacity: 0,
+              x: p.dx,
+              y: p.dy,
+              scale: p.scale,
+              rotate: p.rotate,
+              transition: { duration: 1, ease: "easeOut" },
+            }}
+            onAnimationComplete={() => removeParticle(p.id)}
+          >
+            {p.kind === "heart" ? (
+              <Heart className="h-5 w-5 fill-current" />
+            ) : (
+              <PawPrint className="h-5 w-5" />
+            )}
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 const PawStamps: React.FC = () => {

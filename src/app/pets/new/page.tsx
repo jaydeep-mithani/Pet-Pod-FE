@@ -12,6 +12,7 @@ import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { petsService, type CreatePetInput } from "@/lib/services";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES } from "@/lib/routes";
+import { celebrate } from "@/lib/motion";
 import { petDisplayName } from "@/utils";
 
 const PageShell = ({ children }: { children: React.ReactNode }) => (
@@ -66,6 +67,7 @@ export default function NewPetPage() {
     try {
       const pet = await petsService.create(input);
       toast.success(`${petDisplayName(pet)} is now listed.`);
+      celebrate();
       router.push(ROUTES.petDetail(pet.id));
     } catch (err) {
       const msg =

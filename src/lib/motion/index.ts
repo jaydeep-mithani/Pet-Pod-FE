@@ -1,4 +1,5 @@
 export { MotionThemeProvider, useMotionVibe } from "./MotionThemeProvider";
+export { CELEBRATE_EVENT, celebrate, type CelebrateDetail } from "./celebrate";
 export {
   IMAGE_ZOOM_CLASS,
   MOTION_PRESETS,

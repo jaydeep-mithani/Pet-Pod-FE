@@ -83,6 +83,28 @@ input[type="checkbox"]:checked::after {
   --shadow-glow-purple: 0 8px 32px -8px rgba(168, 85, 247, 0.45);
 }
 
+/* Playful vibe: paw-print cursor. Pink paw everywhere; purple paw over
+   clickables. Inputs/textareas keep the UA text caret (element-level UA
+   rules beat inherited cursor). Touch devices ignore cursor entirely. */
+html.vibe-playful body {
+  cursor:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 28 28'><g fill='%23ec4899' stroke='white' stroke-width='1.5'><circle cx='7' cy='9' r='3'/><circle cx='14' cy='6' r='3'/><circle cx='21' cy='9' r='3'/><ellipse cx='14' cy='18' rx='7' ry='6'/></g></svg>")
+      13 13,
+    auto;
+}
+
+html.vibe-playful a,
+html.vibe-playful button,
+html.vibe-playful [role="button"],
+html.vibe-playful label,
+html.vibe-playful summary,
+html.vibe-playful select {
+  cursor:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><g fill='%239333ea' stroke='white' stroke-width='1.5'><circle cx='7' cy='9' r='3'/><circle cx='14' cy='6' r='3'/><circle cx='21' cy='9' r='3'/><ellipse cx='14' cy='18' rx='7' ry='6'/></g></svg>")
+      14 14,
+    pointer;
+}
+
 /* Frosted-glass surface — pair with a ring/border utility at the callsite */
 .glass {
   background: rgba(255, 255, 255, 0.65);

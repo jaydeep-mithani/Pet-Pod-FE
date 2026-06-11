@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   useSyncExternalStore,
@@ -77,6 +78,14 @@ export function MotionThemeProvider({
       // persist across reloads.
     }
   }, []);
+
+  // Mirror the active vibe onto <html> so plain CSS can theme per vibe
+  // (custom cursors, etc.) without JS in the hot path.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.remove("vibe-playful", "vibe-calm", "vibe-bold");
+    if (!reduced) root.classList.add(`vibe-${vibe}`);
+  }, [vibe, reduced]);
 
   // During SSR and the hydration render, ALWAYS resolve to the default vibe
   // — the server doesn't know localStorage, so using the stored vibe before
