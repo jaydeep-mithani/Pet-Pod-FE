@@ -1,9 +1,11 @@
 // UI Components
 export { default as Button } from "./ui/Button";
 export { default as Card } from "./ui/Card";
+export { default as ConfirmDialog } from "./ui/ConfirmDialog";
 export { default as IconButton } from "./ui/IconButton";
 export { default as ImageUploader } from "./ui/ImageUploader";
 export { default as Input } from "./ui/Input";
+export { default as Modal } from "./ui/Modal";
 export { default as PasswordInput } from "./ui/PasswordInput";
 export { default as PetCard } from "./ui/PetCard";
 export { default as PetCardSkeleton } from "./ui/PetCardSkeleton";
@@ -32,7 +34,6 @@ export { default as FinalCTASection } from "./sections/FinalCTASection";
 export { default as Footer } from "./sections/Footer";
 
 // Community page sections
-export { default as FeaturedPetsSection } from "./sections/FeaturedPetsSection";
-export { default as CommunityStatsSection } from "./sections/CommunityStatsSection";
-export { default as SuccessStoriesSection } from "./sections/SuccessStoriesSection";
-export { default as CommunityEventsSection } from "./sections/CommunityEventsSection";
+export { default as CommunityHeroSection } from "./sections/CommunityHeroSection";
+export { default as MissionSection } from "./sections/MissionSection";
+export { default as ResourcesSection } from "./sections/ResourcesSection";

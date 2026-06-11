@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components";
@@ -17,6 +17,15 @@ export default function WelcomePage() {
   const { user, refresh } = useAuth();
   const router = useRouter();
   const [continuing, setContinuing] = useState(false);
+
+  // /welcome is the avatar-onboarding step; verification gates it. If a user
+  // lands here unverified (e.g. via stale link or back button), push them
+  // back to /verify-email.
+  useEffect(() => {
+    if (status === "authed" && user && !user.emailVerified) {
+      router.replace(ROUTES.verifyEmail);
+    }
+  }, [status, user, router]);
 
   const handleUploaded = async (url: string) => {
     try {

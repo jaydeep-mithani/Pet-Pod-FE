@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import PetForm from "@/components/forms/PetForm";
 import PetFormSkeleton from "@/components/ui/PetFormSkeleton";
 import { Footer } from "@/components";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { petsService, type CreatePetInput } from "@/lib/services";
 import { ApiError } from "@/lib/api/errors";
@@ -46,7 +48,19 @@ const PageShell = ({ children }: { children: React.ReactNode }) => (
 
 export default function NewPetPage() {
   const status = useRequireAuth();
+  const { user } = useAuth();
   const router = useRouter();
+
+  // Listing a pet is a verified-email-only action. Bounce unverified users
+  // proactively so they don't fill out the form just to get a 403.
+  useEffect(() => {
+    if (status === "authed" && user && !user.emailVerified) {
+      toast.info("Verify your email to list a pet.");
+      router.replace(
+        `${ROUTES.verifyEmail}?next=${encodeURIComponent(ROUTES.newListing)}`,
+      );
+    }
+  }, [status, user, router]);
 
   const handleSubmit = async (input: CreatePetInput) => {
     try {

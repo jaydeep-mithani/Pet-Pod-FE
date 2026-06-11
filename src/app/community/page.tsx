@@ -1,19 +1,18 @@
-import React from "react";
 import {
-  FeaturedPetsSection,
-  CommunityStatsSection,
-  SuccessStoriesSection,
-  CommunityEventsSection,
+  CommunityHeroSection,
+  FinalCTASection,
   Footer,
+  MissionSection,
+  ResourcesSection,
 } from "@/components";
 
 export default function CommunityPage() {
   return (
     <main className="min-h-screen">
-      <FeaturedPetsSection />
-      <CommunityStatsSection />
-      <SuccessStoriesSection />
-      <CommunityEventsSection />
+      <CommunityHeroSection />
+      <MissionSection />
+      <ResourcesSection />
+      <FinalCTASection />
       <Footer />
     </main>
   );

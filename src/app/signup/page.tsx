@@ -9,8 +9,9 @@ import { Mail, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input } from "@/components";
 import PasswordInput from "@/components/ui/PasswordInput";
+import GoogleSignInButton from "@/components/ui/GoogleSignInButton";
 import AuthLayout from "@/components/layouts/AuthLayout";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, postAuthRedirect } from "@/lib/routes";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ApiError } from "@/lib/api/errors";
 import { signupSchema, type SignupValues } from "@/lib/validation/auth";
@@ -22,14 +23,13 @@ export default function SignupPage() {
   const router = useRouter();
   const { signup, status, user } = useAuth();
 
-  // Already-authed users hitting /signup go home; freshly-signed-up users
-  // (no avatar yet) get sent to /welcome to set one. The avatarUrl doubles
-  // as a "have they been onboarded?" signal without a separate column.
+  // Once authed, route through the verify → welcome → home chain. Centralised
+  // in postAuthRedirect so signup / login / welcome all agree.
   useEffect(() => {
-    if (status === "authed") {
-      router.replace(user?.avatarUrl ? ROUTES.home : ROUTES.welcome);
+    if (status === "authed" && user) {
+      router.replace(postAuthRedirect(user));
     }
-  }, [status, user?.avatarUrl, router]);
+  }, [status, user, router]);
 
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
@@ -44,7 +44,8 @@ export default function SignupPage() {
         password: values.password,
       });
       toast.success(`Welcome, ${created.name.split(" ")[0]}.`);
-      // The auto-redirect useEffect will route to /welcome (no avatar yet).
+      // The auto-redirect useEffect will route to /verify-email (we just
+      // emailed them a code).
     } catch (err) {
       if (err instanceof ApiError) {
         toast.error(err.message || "Signup failed");
@@ -80,6 +81,14 @@ export default function SignupPage() {
         </p>
       }
     >
+      <GoogleSignInButton label="Sign up with Google" />
+
+      <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-wider text-gray-400">
+        <span className="h-px flex-1 bg-gray-200" />
+        <span>or use email</span>
+        <span className="h-px flex-1 bg-gray-200" />
+      </div>
+
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Your name"
