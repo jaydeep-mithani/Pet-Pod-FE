@@ -1,12 +1,59 @@
+"use client";
+
 import { MessageCircle, PawPrint, Search } from "lucide-react";
 import ScrollReveal from "../ui/ScrollReveal";
 import SectionHeading from "../ui/SectionHeading";
 import TiltCard from "../ui/TiltCard";
 import { HOW_IT_WORKS_STEPS } from "@/constants";
+import { useMotionVibe } from "@/lib/motion";
 
 const STEP_ICONS = [Search, MessageCircle, PawPrint];
 
 const HowItWorksSection: React.FC = () => {
+  const { vibe } = useMotionVibe();
+
+  // Calm: an editorial numbered list — generous whitespace, hairline rules,
+  // oversized serif numerals, no cards or icon chips.
+  if (vibe === "calm") {
+    return (
+      <section
+        id="how-it-works"
+        className="relative overflow-hidden bg-white py-24 sm:py-28"
+      >
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <SectionHeading
+              eyebrow="How it works"
+              title="Three simple steps"
+              subtitle="No paperwork. No marketplace fees. Just people helping pets find the right home."
+            />
+          </ScrollReveal>
+
+          <div className="mt-14 border-t border-stone-200">
+            {HOW_IT_WORKS_STEPS.map((step, i) => (
+              <ScrollReveal key={step.step} delay={i * 0.08}>
+                <div className="grid grid-cols-[4.5rem_1fr] items-start gap-6 border-b border-stone-200 py-10 sm:grid-cols-[7rem_1fr] sm:gap-10">
+                  <span
+                    className="text-5xl font-semibold leading-none text-teal-800/25 sm:text-6xl"
+                    aria-hidden
+                  >
+                    0{step.step}
+                  </span>
+                  <div>
+                    <h3 className="text-2xl text-gray-900">{step.title}</h3>
+                    <p className="mt-2.5 max-w-xl text-base leading-relaxed text-stone-600">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       id="how-it-works"
@@ -27,7 +74,7 @@ const HowItWorksSection: React.FC = () => {
             return (
               <ScrollReveal key={step.step} delay={i * 0.1}>
                 <TiltCard>
-                  <div className="group relative h-full rounded-3xl bg-gradient-to-b from-rose-50/60 to-white p-8 ring-1 ring-rose-100 transition-shadow hover:shadow-[0_8px_32px_-8px_rgba(236,72,153,0.3)]">
+                  <div className="group relative h-full rounded-3xl bg-gradient-to-b from-rose-50/60 to-white p-8 ring-1 ring-rose-100 transition-shadow hover:shadow-[var(--pp-card-glow)]">
                     <div className="absolute -top-4 left-8 inline-flex h-10 items-center rounded-full bg-gradient-to-r from-pink-500 to-purple-600 px-4 text-sm font-semibold text-white shadow-md">
                       Step {step.step}
                     </div>

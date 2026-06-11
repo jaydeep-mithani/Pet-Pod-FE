@@ -48,6 +48,23 @@ const ScrollTracker: React.FC = () => {
   const showWalker = tokens.flourish && !reduced;
   const barHeight = vibe === "bold" ? "h-1.5" : "h-1";
 
+  // Calm: a vertical reading line along the right edge (print-magazine
+  // pattern) instead of the top bar — structurally distinct, not recolored.
+  if (vibe === "calm") {
+    return (
+      <div
+        className="pointer-events-none fixed bottom-0 right-0 top-0 z-[60] w-[3px]"
+        aria-hidden
+      >
+        <div className="absolute inset-0 bg-stone-200/60" />
+        <motion.div
+          style={{ scaleY: scaleX }}
+          className="absolute inset-0 origin-top bg-teal-700"
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className="pointer-events-none fixed inset-x-0 top-0 z-[60]"

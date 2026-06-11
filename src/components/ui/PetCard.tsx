@@ -101,7 +101,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, priority, className }) => {
 
       <Link
         href={ROUTES.petDetail(pet.id)}
-        className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-200/70 transition-[box-shadow,--tw-ring-color] duration-300 hover:shadow-[0_8px_32px_-8px_rgba(236,72,153,0.35)] hover:ring-pink-300/70"
+        className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-200/70 transition-[box-shadow,--tw-ring-color] duration-300 hover:shadow-[var(--pp-card-glow)] hover:ring-pink-300/70"
       >
         {/*
           The image wrapper owns its own rounded clip + compositing layer

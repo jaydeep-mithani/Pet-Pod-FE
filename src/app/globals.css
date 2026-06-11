@@ -81,6 +81,12 @@ input[type="checkbox"]:checked::after {
   );
   --shadow-glow-pink: 0 8px 32px -8px rgba(236, 72, 153, 0.45);
   --shadow-glow-purple: 0 8px 32px -8px rgba(168, 85, 247, 0.45);
+  /* Card hover glow — themed per vibe (calm overrides to a teal whisper) */
+  --pp-card-glow: 0 8px 32px -8px rgba(236, 72, 153, 0.35);
+}
+
+html.vibe-calm {
+  --pp-card-glow: 0 12px 28px -18px rgba(15, 118, 110, 0.4);
 }
 
 /* Playful vibe: paw-print cursor. Pink paw everywhere; purple paw over
@@ -156,6 +162,12 @@ html.vibe-calm .text-pink-500 {
 html.vibe-calm .hover\:text-pink-700:hover {
   color: #115e59;
 }
+html.vibe-calm .hover\:text-pink-600:hover {
+  color: #0f766e;
+}
+html.vibe-calm .hover\:text-pink-200:hover {
+  color: #99f6e4;
+}
 html.vibe-calm .text-pink-400 {
   color: #5eead4;
 }
@@ -185,6 +197,14 @@ html.vibe-calm .border-pink-500 {
 /* Brand gradients -> deep sea range */
 html.vibe-calm .from-pink-500 {
   --tw-gradient-from: #0d9488;
+}
+/* Opacity-suffixed stops are distinct Tailwind classes — remap separately
+   (used by belief/step icon chips on community + home sections). */
+html.vibe-calm .from-pink-500\/80 {
+  --tw-gradient-from: rgba(13, 148, 136, 0.85);
+}
+html.vibe-calm .to-purple-600\/80 {
+  --tw-gradient-to: rgba(19, 78, 74, 0.85);
 }
 html.vibe-calm .via-purple-500 {
   --tw-gradient-via: #0f766e;
