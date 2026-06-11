@@ -3,15 +3,78 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { ChevronDown, Heart, PawPrint } from "lucide-react";
 import Button from "../ui/Button";
 import { ROUTES } from "@/lib/routes";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=2000&q=80";
 
+const HEADLINE_LINE_1 = ["Every", "pet", "deserves"];
+const HEADLINE_LINE_2 = ["a", "second", "home."];
+
+/** Per-vibe word entrance — structurally different, not just retimed. */
+function wordVariants(vibe: MotionVibe, reducedLike: boolean): Variants {
+  if (reducedLike) {
+    return {
+      hidden: { opacity: 1 },
+      visible: { opacity: 1 },
+    };
+  }
+  switch (vibe) {
+    case "playful":
+      return {
+        hidden: { opacity: 0, y: 22, scale: 0.9 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: { type: "spring", stiffness: 380, damping: 16 },
+        },
+      };
+    case "bold":
+      return {
+        hidden: { opacity: 0, y: 56, rotateX: 35 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          rotateX: 0,
+          transition: {
+            type: "spring",
+            stiffness: 160,
+            damping: 22,
+            mass: 1.2,
+          },
+        },
+      };
+    case "calm":
+    default:
+      return {
+        hidden: { opacity: 0, y: 14 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+        },
+      };
+  }
+}
+
+/** Decorative floating shapes — playful/bold only. */
+const FLOURISHES = [
+  { Icon: PawPrint, className: "left-[8%] top-[22%] h-8 w-8", delay: 0 },
+  { Icon: Heart, className: "right-[12%] top-[30%] h-6 w-6", delay: 1.2 },
+  {
+    Icon: PawPrint,
+    className: "right-[20%] bottom-[24%] h-10 w-10",
+    delay: 0.6,
+  },
+] as const;
+
 const HeroSection: React.FC = () => {
+  const { tokens, vibe, reduced } = useMotionVibe();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -23,13 +86,21 @@ const HeroSection: React.FC = () => {
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
+  const words = wordVariants(vibe, reduced);
+  const stagger = tokens.reveal.stagger;
+
+  const container: Variants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: stagger, delayChildren: 0.1 } },
+  };
+
   return (
     <section
       ref={ref}
       className="relative isolate h-[100svh] min-h-[640px] w-full overflow-hidden bg-gray-950"
     >
       <motion.div
-        style={{ y: imageY }}
+        style={{ y: reduced ? 0 : imageY }}
         className="absolute inset-0 z-0"
         aria-hidden
       >
@@ -49,67 +120,107 @@ const HeroSection: React.FC = () => {
         aria-hidden
       />
 
+      {tokens.flourish && (
+        <div className="absolute inset-0 z-10 overflow-hidden" aria-hidden>
+          {FLOURISHES.map(({ Icon, className, delay }, i) => (
+            <motion.div
+              key={i}
+              className={`absolute text-white/15 ${className}`}
+              animate={{
+                y: [0, -18, -6, 0],
+                rotate: [0, 8, -6, 0],
+              }}
+              transition={{
+                duration: 7 + i * 1.5,
+                delay,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <Icon className="h-full w-full" />
+            </motion.div>
+          ))}
+        </div>
+      )}
+
       <motion.div
-        style={{ y: contentY, opacity: contentOpacity }}
+        style={{ y: reduced ? 0 : contentY, opacity: contentOpacity }}
         className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6 lg:px-8"
       >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white/90 backdrop-blur"
+          variants={container}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col items-center"
         >
-          <PawPrint className="h-3.5 w-3.5" aria-hidden />
-          <span>No money. Just love.</span>
-        </motion.div>
+          <motion.div
+            variants={words}
+            className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white/90 backdrop-blur"
+          >
+            <PawPrint className="h-3.5 w-3.5" aria-hidden />
+            <span>No money. Just love.</span>
+          </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
-        >
-          Every pet deserves
-          <span className="block bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 bg-clip-text text-transparent">
-            a second home.
-          </span>
-        </motion.h1>
+          <h1
+            className="mt-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+            style={{ perspective: 800 }}
+          >
+            <span className="block">
+              {HEADLINE_LINE_1.map((word) => (
+                <motion.span
+                  key={word}
+                  variants={words}
+                  className="inline-block whitespace-pre"
+                >
+                  {word}{" "}
+                </motion.span>
+              ))}
+            </span>
+            <span className="block animate-gradient bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 bg-clip-text text-transparent">
+              {HEADLINE_LINE_2.map((word) => (
+                <motion.span
+                  key={word}
+                  variants={words}
+                  className="inline-block whitespace-pre"
+                >
+                  {word}{" "}
+                </motion.span>
+              ))}
+            </span>
+          </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 max-w-2xl text-base text-white/85 sm:text-lg md:text-xl"
-        >
-          Pet Pod connects people who can&apos;t keep their pets with people who
-          can. No marketplace, no fees — just honest conversations and safe
-          rehoming.
-        </motion.p>
+          <motion.p
+            variants={words}
+            className="mt-6 max-w-2xl text-base text-white/85 sm:text-lg md:text-xl"
+          >
+            Pet Pod connects people who can&apos;t keep their pets with people
+            who can. No marketplace, no fees — just honest conversations and
+            safe rehoming.
+          </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4"
-        >
-          <Link href={ROUTES.pets} className="w-full sm:w-auto">
-            <Button
-              size="lg"
-              icon={<Heart className="h-5 w-5" />}
-              className="w-full sm:w-auto sm:min-w-[200px]"
-            >
-              Browse pets
-            </Button>
-          </Link>
-          <Link href={ROUTES.newListing} className="w-full sm:w-auto">
-            <Button
-              variant="floating"
-              size="lg"
-              className="w-full sm:w-auto sm:min-w-[200px]"
-            >
-              Rehome a pet
-            </Button>
-          </Link>
+          <motion.div
+            variants={words}
+            className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4"
+          >
+            <Link href={ROUTES.pets} className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                icon={<Heart className="h-5 w-5" />}
+                className="w-full sm:w-auto sm:min-w-[200px]"
+              >
+                Browse pets
+              </Button>
+            </Link>
+            <Link href={ROUTES.newListing} className="w-full sm:w-auto">
+              <Button
+                variant="floating"
+                size="lg"
+                className="w-full sm:w-auto sm:min-w-[200px]"
+              >
+                Rehome a pet
+              </Button>
+            </Link>
+          </motion.div>
         </motion.div>
       </motion.div>
 
@@ -120,7 +231,7 @@ const HeroSection: React.FC = () => {
         className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 text-white/70"
       >
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          animate={reduced ? undefined : { y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-1"
         >

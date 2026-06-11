@@ -2,7 +2,7 @@
 
 import { motion, type Variants } from "framer-motion";
 import React from "react";
-import { usePrefersReducedMotion } from "@/hooks";
+import { useMotionVibe } from "@/lib/motion";
 
 type Direction = "up" | "down" | "left" | "right" | "none";
 
@@ -10,8 +10,10 @@ interface ScrollRevealProps {
   children: React.ReactNode;
   direction?: Direction;
   delay?: number;
-  duration?: number;
+  /** Overrides the vibe's reveal distance when provided. */
   distance?: number;
+  /** Legacy prop — kept for API compatibility; vibes own their durations. */
+  duration?: number;
   className?: string;
   once?: boolean;
 }
@@ -35,27 +37,23 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   children,
   direction = "up",
   delay = 0,
-  duration = 0.6,
-  distance = 24,
+  distance,
   className,
   once = true,
 }) => {
-  const reduced = usePrefersReducedMotion();
+  const { tokens } = useMotionVibe();
+  const travel = distance ?? tokens.reveal.distance;
 
   const variants: Variants = {
     hidden: {
-      opacity: 0,
-      ...offsetFor(direction, distance),
+      opacity: travel === 0 ? 1 : 0,
+      ...offsetFor(direction, travel),
     },
     visible: {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: {
-        duration: reduced ? 0 : duration,
-        delay: reduced ? 0 : delay,
-        ease: [0.22, 1, 0.36, 1],
-      },
+      transition: { ...tokens.entrance, delay },
     },
   };
 

@@ -7,6 +7,7 @@ import PhotoCarousel from "./PhotoCarousel";
 import type { PetListItem } from "@/types";
 import { ROUTES } from "@/lib/routes";
 import { SPECIES_EMOJI, SPECIES_LABEL } from "@/constants";
+import { IMAGE_ZOOM_CLASS, useMotionVibe } from "@/lib/motion";
 import {
   cn,
   formatLocation,
@@ -22,6 +23,7 @@ interface PetCardProps {
 }
 
 const PetCard: React.FC<PetCardProps> = ({ pet, priority, className }) => {
+  const { tokens } = useMotionVibe();
   const locationLabel = formatLocation(pet);
   const speciesLabel = pet.breed ?? SPECIES_LABEL[pet.species];
   const hasPhotos = pet.photos.length > 0;
@@ -30,13 +32,17 @@ const PetCard: React.FC<PetCardProps> = ({ pet, priority, className }) => {
 
   return (
     <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      whileHover={{
+        y: tokens.hover.y,
+        scale: tokens.hover.scale,
+        rotate: tokens.hover.rotate,
+      }}
+      transition={tokens.interactive}
       className={cn("h-full", className)}
     >
       <Link
         href={ROUTES.petDetail(pet.id)}
-        className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-200/70 transition-shadow hover:shadow-xl"
+        className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-200/70 transition-[box-shadow,--tw-ring-color] duration-300 hover:shadow-[0_8px_32px_-8px_rgba(236,72,153,0.35)] hover:ring-pink-300/70"
       >
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-gray-100">
           {hasPhotos ? (
@@ -47,7 +53,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, priority, className }) => {
               priority={priority}
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
               showDots
-              className="transition-transform duration-500 group-hover:scale-105"
+              className={IMAGE_ZOOM_CLASS[tokens.imageZoom]}
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100 text-gray-500">

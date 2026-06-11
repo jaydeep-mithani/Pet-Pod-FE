@@ -6,7 +6,7 @@ import { ROUTES } from "@/lib/routes";
 
 const FinalCTASection: React.FC = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 py-20 sm:py-28">
+    <section className="animate-gradient relative overflow-hidden bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 py-20 sm:py-28">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-30"

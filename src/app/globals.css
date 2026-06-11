@@ -61,6 +61,98 @@ input[type="checkbox"]:checked::after {
   transform: rotate(45deg);
 }
 
+/* ---------------------------------------------------------------------- */
+/* Visual language v2: richer gradients, glass surfaces, glow + shimmer.   */
+/* ---------------------------------------------------------------------- */
+
+:root {
+  /* Brand gradient evolved: pink → purple → indigo tri-stop for more depth */
+  --gradient-brand: linear-gradient(
+    135deg,
+    #ec4899 0%,
+    #a855f7 55%,
+    #6366f1 100%
+  );
+  --gradient-brand-soft: linear-gradient(
+    135deg,
+    #fdf2f8 0%,
+    #faf5ff 55%,
+    #eef2ff 100%
+  );
+  --shadow-glow-pink: 0 8px 32px -8px rgba(236, 72, 153, 0.45);
+  --shadow-glow-purple: 0 8px 32px -8px rgba(168, 85, 247, 0.45);
+}
+
+/* Frosted-glass surface — pair with a ring/border utility at the callsite */
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+
+.glass-dark {
+  background: rgba(17, 24, 39, 0.55);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+}
+
+/* Animated gradient sweep — for hero text and CTA backgrounds */
+@keyframes gradient-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-sweep 6s ease-in-out infinite;
+}
+
+/* Skeleton shimmer — overlays a moving highlight on loading placeholders */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient,
+  .shimmer::after,
+  .animate-float,
+  .animate-fade-in,
+  .animate-fade-in-up {
+    animation: none !important;
+  }
+}
+
 /* Custom animations */
 @keyframes fade-in {
   from {

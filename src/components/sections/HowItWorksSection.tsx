@@ -1,6 +1,7 @@
 import { MessageCircle, PawPrint, Search } from "lucide-react";
 import ScrollReveal from "../ui/ScrollReveal";
 import SectionHeading from "../ui/SectionHeading";
+import TiltCard from "../ui/TiltCard";
 import { HOW_IT_WORKS_STEPS } from "@/constants";
 
 const STEP_ICONS = [Search, MessageCircle, PawPrint];
@@ -25,20 +26,22 @@ const HowItWorksSection: React.FC = () => {
             const Icon = STEP_ICONS[i];
             return (
               <ScrollReveal key={step.step} delay={i * 0.1}>
-                <div className="group relative h-full rounded-3xl bg-gradient-to-b from-rose-50/60 to-white p-8 ring-1 ring-rose-100 transition-all hover:-translate-y-1 hover:shadow-lg">
-                  <div className="absolute -top-4 left-8 inline-flex h-10 items-center rounded-full bg-gradient-to-r from-pink-500 to-purple-600 px-4 text-sm font-semibold text-white shadow-md">
-                    Step {step.step}
+                <TiltCard>
+                  <div className="group relative h-full rounded-3xl bg-gradient-to-b from-rose-50/60 to-white p-8 ring-1 ring-rose-100 transition-shadow hover:shadow-[0_8px_32px_-8px_rgba(236,72,153,0.3)]">
+                    <div className="absolute -top-4 left-8 inline-flex h-10 items-center rounded-full bg-gradient-to-r from-pink-500 to-purple-600 px-4 text-sm font-semibold text-white shadow-md">
+                      Step {step.step}
+                    </div>
+                    <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-pink-600 shadow-sm ring-1 ring-rose-100 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                      {Icon && <Icon className="h-6 w-6" aria-hidden />}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                      {step.description}
+                    </p>
                   </div>
-                  <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-pink-600 shadow-sm ring-1 ring-rose-100">
-                    {Icon && <Icon className="h-6 w-6" aria-hidden />}
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                    {step.description}
-                  </p>
-                </div>
+                </TiltCard>
               </ScrollReveal>
             );
           })}

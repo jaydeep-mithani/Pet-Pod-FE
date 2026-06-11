@@ -6,6 +6,7 @@ import { FloatingNavbar } from "@/components";
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/constants";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { ChatProvider } from "@/lib/chat/ChatProvider";
+import { MotionThemeProvider } from "@/lib/motion";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,13 +33,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <ChatProvider>
-            <FloatingNavbar />
-            {children}
-            <Toaster position="top-center" richColors closeButton />
-          </ChatProvider>
-        </AuthProvider>
+        <MotionThemeProvider>
+          <AuthProvider>
+            <ChatProvider>
+              <FloatingNavbar />
+              {children}
+              <Toaster position="top-center" richColors closeButton />
+            </ChatProvider>
+          </AuthProvider>
+        </MotionThemeProvider>
       </body>
     </html>
   );

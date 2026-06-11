@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Button from "./Button";
+import MotionVibeToggle from "./MotionVibeToggle";
 import UserMenu from "./UserMenu";
 import { useScrolled } from "@/hooks";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -128,6 +129,10 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
           </div>
 
           <div className="hidden items-center gap-2 lg:flex">
+            <MotionVibeToggle
+              variant="compact"
+              appearance={isScrolled ? "dark" : "light"}
+            />
             {status === "loading" ? (
               <div
                 className={cn(
@@ -205,6 +210,20 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
               )}
             </Link>
           ))}
+          <div className="flex items-center justify-between px-3 pt-3">
+            <span
+              className={cn(
+                "text-xs font-medium uppercase tracking-wider",
+                isScrolled ? "text-white/60" : "text-gray-400",
+              )}
+            >
+              Animations
+            </span>
+            <MotionVibeToggle
+              variant="full"
+              appearance={isScrolled ? "dark" : "light"}
+            />
+          </div>
           <div className="space-y-2 pt-3">
             {status === "authed" && user ? (
               <div className="rounded-xl bg-pink-50 p-3">
