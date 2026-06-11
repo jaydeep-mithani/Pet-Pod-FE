@@ -78,15 +78,22 @@ export function MotionThemeProvider({
     }
   }, []);
 
+  // During SSR and the hydration render, ALWAYS resolve to the default vibe
+  // — the server doesn't know localStorage, so using the stored vibe before
+  // `hydrated` flips causes hydration mismatches (server renders playful
+  // markup, client renders the stored vibe's markup). One render after
+  // hydration, the stored vibe takes over.
+  const effectiveVibe = hydrated ? vibe : DEFAULT_VIBE;
+
   const value = useMemo<MotionVibeContextValue>(
     () => ({
-      vibe,
+      vibe: effectiveVibe,
       setVibe,
-      tokens: reduced ? REDUCED_TOKENS : MOTION_PRESETS[vibe],
+      tokens: reduced ? REDUCED_TOKENS : MOTION_PRESETS[effectiveVibe],
       reduced,
       hydrated,
     }),
-    [vibe, setVibe, reduced, hydrated],
+    [effectiveVibe, setVibe, reduced, hydrated],
   );
 
   return (

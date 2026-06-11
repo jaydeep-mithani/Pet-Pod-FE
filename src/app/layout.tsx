@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
-import { FloatingNavbar } from "@/components";
+import { FloatingNavbar, VibeLayer } from "@/components";
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/constants";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { ChatProvider } from "@/lib/chat/ChatProvider";
@@ -37,6 +37,7 @@ export default function RootLayout({
           <AuthProvider>
             <ChatProvider>
               <FloatingNavbar />
+              <VibeLayer />
               {children}
               <Toaster position="top-center" richColors closeButton />
             </ChatProvider>
