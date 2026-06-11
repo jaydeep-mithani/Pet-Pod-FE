@@ -50,6 +50,8 @@ export interface MotionTokens {
   flourish: boolean;
   /** Whether magnetic-pull buttons are enabled (bold only). */
   magnetic: boolean;
+  /** Entrances de-blur instead of travel (calm's signature). */
+  blurEntrance: boolean;
 }
 
 export const MOTION_PRESETS: Record<MotionVibe, MotionTokens> = {
@@ -63,17 +65,19 @@ export const MOTION_PRESETS: Record<MotionVibe, MotionTokens> = {
     imageZoom: "medium",
     flourish: true,
     magnetic: false,
+    blurEntrance: false,
   },
   calm: {
     interactive: { type: "tween", duration: 0.25, ease: [0.16, 1, 0.3, 1] },
     entrance: { type: "tween", duration: 0.6, ease: [0.22, 1, 0.36, 1] },
     hover: { y: -4, scale: 1, rotate: 0 },
     press: { scale: 0.98 },
-    reveal: { distance: 16, stagger: 0.06 },
-    page: { y: 8, duration: 0.3 },
+    reveal: { distance: 10, stagger: 0.07 },
+    page: { y: 0, duration: 0.45 },
     imageZoom: "subtle",
     flourish: false,
     magnetic: false,
+    blurEntrance: true,
   },
   bold: {
     interactive: { type: "spring", stiffness: 300, damping: 22, mass: 1.1 },
@@ -85,6 +89,7 @@ export const MOTION_PRESETS: Record<MotionVibe, MotionTokens> = {
     imageZoom: "dramatic",
     flourish: true,
     magnetic: true,
+    blurEntrance: false,
   },
 };
 
@@ -99,6 +104,7 @@ export const REDUCED_TOKENS: MotionTokens = {
   imageZoom: "none",
   flourish: false,
   magnetic: false,
+  blurEntrance: false,
 };
 
 export const VIBE_LABEL: Record<MotionVibe, string> = {

@@ -19,7 +19,9 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   return (
     <div
       className={cn(
-        "max-w-3xl",
+        // pp-heading is a styling hook for vibe theme layers (e.g. calm
+        // left-aligns all section headings via html.vibe-calm CSS).
+        "pp-heading max-w-3xl",
         align === "center" ? "mx-auto text-center" : "text-left",
         className,
       )}

@@ -105,6 +105,120 @@ html.vibe-playful select {
     pointer;
 }
 
+/* ---------------------------------------------------------------------- */
+/* Calm vibe theme layer: editorial serenity.                              */
+/*                                                                         */
+/* Calm isn't just slower animation — it's a different visual identity:    */
+/* serif display type, a muted teal/sage + warm sand palette in place of   */
+/* hot pink/purple, flatter geometry, and softer depth. Implemented as     */
+/* scoped overrides keyed off html.vibe-calm (set by MotionThemeProvider)  */
+/* so the entire app re-themes without forking components. The selectors   */
+/* target Tailwind utility classes present in the DOM; scoping under       */
+/* html.vibe-calm gives them higher specificity than the utilities.        */
+/* ---------------------------------------------------------------------- */
+
+/* Typography: serif display headings */
+html.vibe-calm h1,
+html.vibe-calm h2,
+html.vibe-calm h3 {
+  font-family: var(--font-lora), Georgia, serif;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+
+/* Structure: section headings align left, editorial-style */
+html.vibe-calm .pp-heading {
+  margin-left: 0;
+  text-align: left;
+}
+
+/* Geometry: flatter corners, quieter shadows */
+html.vibe-calm .rounded-3xl {
+  border-radius: 0.875rem;
+}
+html.vibe-calm .rounded-2xl {
+  border-radius: 0.625rem;
+}
+html.vibe-calm .shadow-2xl,
+html.vibe-calm .shadow-xl,
+html.vibe-calm .shadow-lg {
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05),
+    0 10px 28px -16px rgba(15, 23, 42, 0.18);
+}
+
+/* Palette remap: pink/purple brand hues -> teal/sage + warm sand.
+   Gradient stops are remapped via Tailwind v4's --tw-gradient-* vars. */
+html.vibe-calm .text-pink-600,
+html.vibe-calm .text-pink-500 {
+  color: #0f766e;
+}
+html.vibe-calm .hover\:text-pink-700:hover {
+  color: #115e59;
+}
+html.vibe-calm .text-pink-400 {
+  color: #5eead4;
+}
+html.vibe-calm .bg-pink-500 {
+  background-color: #0d9488;
+}
+html.vibe-calm .bg-pink-50 {
+  background-color: #f0fdfa;
+}
+html.vibe-calm .hover\:bg-pink-50:hover {
+  background-color: #f0fdfa;
+}
+html.vibe-calm .bg-rose-50 {
+  background-color: #fafaf9;
+}
+html.vibe-calm .ring-rose-100,
+html.vibe-calm .ring-pink-200 {
+  --tw-ring-color: #ccfbf1;
+}
+html.vibe-calm .hover\:ring-pink-300\/70:hover {
+  --tw-ring-color: rgba(94, 234, 212, 0.7);
+}
+html.vibe-calm .border-pink-500 {
+  border-color: #0f766e;
+}
+
+/* Brand gradients -> deep sea range */
+html.vibe-calm .from-pink-500 {
+  --tw-gradient-from: #0d9488;
+}
+html.vibe-calm .via-purple-500 {
+  --tw-gradient-via: #0f766e;
+}
+html.vibe-calm .to-purple-600,
+html.vibe-calm .to-indigo-500 {
+  --tw-gradient-to: #134e4a;
+}
+html.vibe-calm .from-pink-100 {
+  --tw-gradient-from: #ccfbf1;
+}
+html.vibe-calm .to-rose-200 {
+  --tw-gradient-to: #d6f5ee;
+}
+
+/* Hero headline gradient -> seafoam to sand */
+html.vibe-calm .from-pink-300 {
+  --tw-gradient-from: #99f6e4;
+}
+html.vibe-calm .via-rose-200 {
+  --tw-gradient-via: #cdf7ec;
+}
+html.vibe-calm .to-amber-200 {
+  --tw-gradient-to: #fde9b8;
+}
+
+/* Soft page-section washes -> warm stone instead of rose */
+html.vibe-calm .from-rose-50\/60 {
+  --tw-gradient-from: rgba(250, 250, 249, 0.6);
+}
+html.vibe-calm .to-rose-50\/40 {
+  --tw-gradient-to: rgba(250, 250, 249, 0.4);
+}
+
 /* Frosted-glass surface — pair with a ring/border utility at the callsite */
 .glass {
   background: rgba(255, 255, 255, 0.65);

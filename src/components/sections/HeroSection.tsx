@@ -88,6 +88,8 @@ const HeroSection: React.FC = () => {
 
   const words = wordVariants(vibe, reduced);
   const stagger = tokens.reveal.stagger;
+  // Calm gets an editorial, left-aligned hero; playful/bold stay centered.
+  const editorial = vibe === "calm";
 
   const container: Variants = {
     hidden: {},
@@ -145,21 +147,38 @@ const HeroSection: React.FC = () => {
 
       <motion.div
         style={{ y: reduced ? 0 : contentY, opacity: contentOpacity }}
-        className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6 lg:px-8"
+        className={
+          editorial
+            ? "relative z-20 mx-auto flex h-full w-full max-w-7xl flex-col items-start justify-center px-6 text-left text-white sm:px-10 lg:px-16"
+            : "relative z-20 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6 lg:px-8"
+        }
       >
         <motion.div
           variants={container}
           initial="hidden"
           animate="visible"
-          className="flex flex-col items-center"
+          className={
+            editorial
+              ? "flex flex-col items-start"
+              : "flex flex-col items-center"
+          }
         >
-          <motion.div
-            variants={words}
-            className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white/90 backdrop-blur"
-          >
-            <PawPrint className="h-3.5 w-3.5" aria-hidden />
-            <span>No money. Just love.</span>
-          </motion.div>
+          {editorial ? (
+            <motion.span
+              variants={words}
+              className="text-xs font-medium uppercase tracking-[0.25em] text-teal-100/90"
+            >
+              No money. Just love.
+            </motion.span>
+          ) : (
+            <motion.div
+              variants={words}
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white/90 backdrop-blur"
+            >
+              <PawPrint className="h-3.5 w-3.5" aria-hidden />
+              <span>No money. Just love.</span>
+            </motion.div>
+          )}
 
           <h1
             className="mt-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
@@ -176,12 +195,17 @@ const HeroSection: React.FC = () => {
                 </motion.span>
               ))}
             </span>
-            <span className="block animate-gradient bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 bg-clip-text text-transparent">
+            {/*
+              bg-clip-text lives on each word, NOT the parent: clipping on an
+              ancestor of composited (animated) children breaks in Chromium —
+              the text turns invisible. Same-element clip + transform is safe.
+            */}
+            <span className="block">
               {HEADLINE_LINE_2.map((word) => (
                 <motion.span
                   key={word}
                   variants={words}
-                  className="inline-block whitespace-pre"
+                  className="inline-block whitespace-pre bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 bg-clip-text text-transparent"
                 >
                   {word}{" "}
                 </motion.span>

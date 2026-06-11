@@ -43,16 +43,20 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
 }) => {
   const { tokens } = useMotionVibe();
   const travel = distance ?? tokens.reveal.distance;
+  // Calm's signature: content de-blurs into place instead of travelling.
+  const blur = tokens.blurEntrance;
 
   const variants: Variants = {
     hidden: {
-      opacity: travel === 0 ? 1 : 0,
+      opacity: travel === 0 && !blur ? 1 : 0,
+      ...(blur ? { filter: "blur(10px)" } : {}),
       ...offsetFor(direction, travel),
     },
     visible: {
       opacity: 1,
       x: 0,
       y: 0,
+      ...(blur ? { filter: "blur(0px)" } : {}),
       transition: { ...tokens.entrance, delay },
     },
   };
