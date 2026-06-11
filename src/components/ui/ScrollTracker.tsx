@@ -32,13 +32,18 @@ const ScrollTracker: React.FC = () => {
   const scaleX = reduced ? scrollYProgress : progress;
   const headLeft = useTransform(scaleX, (v) => `${v * 100}%`);
 
-  // The walker leans into the direction of travel — pure reaction to the
-  // user's scrolling, idle when they're idle.
+  // The walker leans into the direction of travel and "hops" (scales up)
+  // with scroll speed — pure reaction to the user's scrolling, idle when
+  // they're idle.
   const velocity = useVelocity(scrollYProgress);
   const lean = useSpring(useTransform(velocity, [-2, 0, 2], [-24, 0, 24]), {
     stiffness: 300,
     damping: 24,
   });
+  const hop = useSpring(
+    useTransform(velocity, (v) => 1 + Math.min(Math.abs(v) * 0.35, 0.45)),
+    { stiffness: 320, damping: 18 },
+  );
 
   const showWalker = tokens.flourish && !reduced;
   const barHeight = vibe === "bold" ? "h-1.5" : "h-1";
@@ -60,14 +65,14 @@ const ScrollTracker: React.FC = () => {
         >
           {vibe === "playful" ? (
             <motion.div
-              style={{ rotate: lean }}
+              style={{ rotate: lean, scale: hop }}
               className="mt-0.5 rounded-full bg-white p-1 text-pink-600 shadow-md ring-1 ring-pink-200"
             >
               <PawPrint className="h-3.5 w-3.5" />
             </motion.div>
           ) : (
             <motion.div
-              style={{ rotate: lean }}
+              style={{ rotate: lean, scale: hop }}
               className="mt-0.5 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 p-1 text-white shadow-[0_0_16px_rgba(236,72,153,0.8)]"
             >
               <Zap className="h-3.5 w-3.5" />

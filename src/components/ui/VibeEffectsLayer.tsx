@@ -43,12 +43,115 @@ const VibeEffectsLayer: React.FC = () => {
     return (
       <>
         <PawStamps />
+        <PawTrail />
         <CelebrationBursts />
       </>
     );
   }
   if (vibe === "bold") return <BoldCursorLayer />;
   return null;
+};
+
+interface TrailPaw {
+  id: number;
+  x: number;
+  y: number;
+  angle: number;
+}
+
+let trailId = 0;
+const TRAIL_SPEED_THRESHOLD = 1.3; // px per ms — only "running" cursors track
+const TRAIL_STEP = 84; // px of travel between footprints
+const MAX_TRAIL = 14;
+
+/**
+ * Cursor-momentum footprints: move the pointer fast and paw prints appear
+ * along the path, alternating left/right of the travel line like an actual
+ * trotting pet. Slow, deliberate movement leaves no tracks.
+ */
+const PawTrail: React.FC = () => {
+  const [paws, setPaws] = useState<TrailPaw[]>([]);
+
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    let lastX = -1;
+    let lastY = -1;
+    let lastT = 0;
+    let travelled = 0;
+    let stepSide = 1;
+
+    const onMove = (e: PointerEvent) => {
+      const now = performance.now();
+      if (lastX < 0) {
+        lastX = e.clientX;
+        lastY = e.clientY;
+        lastT = now;
+        return;
+      }
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const dt = Math.max(1, now - lastT);
+      const dist = Math.hypot(dx, dy);
+      const speed = dist / dt;
+
+      // Reset accumulated travel when the cursor slows to a stroll.
+      travelled = speed >= TRAIL_SPEED_THRESHOLD ? travelled + dist : 0;
+
+      if (travelled >= TRAIL_STEP) {
+        travelled = 0;
+        stepSide = -stepSide;
+        const angle = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
+        // Offset each footprint perpendicular to the travel direction so
+        // left/right steps alternate like a trot.
+        const perp = Math.atan2(dy, dx) + Math.PI / 2;
+        const offset = 12 * stepSide;
+        setPaws((curr) => [
+          ...curr.slice(-MAX_TRAIL + 1),
+          {
+            id: trailId++,
+            x: e.clientX + Math.cos(perp) * offset,
+            y: e.clientY + Math.sin(perp) * offset,
+            angle,
+          },
+        ]);
+      }
+
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = now;
+    };
+
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
+  const removePaw = (id: number) => {
+    setPaws((curr) => curr.filter((p) => p.id !== id));
+  };
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[44]" aria-hidden>
+      <AnimatePresence>
+        {paws.map((paw) => (
+          <motion.div
+            key={paw.id}
+            className="absolute text-pink-400/60"
+            style={{ left: paw.x, top: paw.y, rotate: paw.angle }}
+            initial={{ opacity: 0.7, scale: 0.9, x: "-50%", y: "-50%" }}
+            animate={{
+              opacity: 0,
+              scale: 0.7,
+              transition: { duration: 0.7, ease: "easeOut" },
+            }}
+            onAnimationComplete={() => removePaw(paw.id)}
+          >
+            <PawPrint className="h-4 w-4" />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 interface BurstParticle {
@@ -194,7 +297,7 @@ const PawStamps: React.FC = () => {
             }}
             onAnimationComplete={() => removeStamp(stamp.id)}
           >
-            <PawPrint className="h-7 w-7" />
+            <PawPrint className="h-11 w-11 drop-shadow-sm" />
           </motion.div>
         ))}
       </AnimatePresence>

@@ -9,6 +9,7 @@ import {
   Footer,
   PetCard,
   SectionHeading,
+  VelocityTilt,
 } from "@/components";
 import { petsService } from "@/lib/services";
 import { ROUTES } from "@/lib/routes";
@@ -53,11 +54,11 @@ export default async function PetsBrowsePage() {
       <section className="pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {pets.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <VelocityTilt className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {pets.map((pet, i) => (
                 <PetCard key={pet.id} pet={pet} priority={i < 4} />
               ))}
-            </div>
+            </VelocityTilt>
           ) : (
             <div className="mx-auto max-w-xl rounded-3xl border border-rose-100 bg-rose-50/40 p-10 text-center">
               <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 to-rose-200 text-pink-600">

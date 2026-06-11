@@ -9,6 +9,7 @@ export { default as Modal } from "./ui/Modal";
 export { default as PasswordInput } from "./ui/PasswordInput";
 export { default as ScrollTracker } from "./ui/ScrollTracker";
 export { default as TiltCard } from "./ui/TiltCard";
+export { default as VelocityTilt } from "./ui/VelocityTilt";
 export { default as VibeEffectsLayer } from "./ui/VibeEffectsLayer";
 export { default as VibeFab } from "./ui/VibeFab";
 export { default as VibeLayer } from "./ui/VibeLayer";
