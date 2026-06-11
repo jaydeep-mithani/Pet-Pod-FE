@@ -7,7 +7,7 @@ import {
   useTransform,
   useVelocity,
 } from "framer-motion";
-import { PawPrint, Zap } from "lucide-react";
+import { PawPrint } from "lucide-react";
 import { useMotionVibe } from "@/lib/motion";
 
 /**
@@ -47,6 +47,9 @@ const ScrollTracker: React.FC = () => {
 
   const showWalker = tokens.flourish && !reduced;
   const barHeight = vibe === "bold" ? "h-1.5" : "h-1";
+  // Live percentage readout for bold's HUD chip — rendered as a motion
+  // value child so it updates without React re-renders.
+  const pctText = useTransform(scaleX, (v) => `${Math.round(v * 100)}%`);
 
   // Calm: a vertical reading line along the right edge (print-magazine
   // pattern) instead of the top bar — structurally distinct, not recolored.
@@ -72,7 +75,9 @@ const ScrollTracker: React.FC = () => {
     >
       <motion.div
         style={{ scaleX }}
-        className={`origin-left bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 ${barHeight}`}
+        className={`origin-left bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 ${barHeight} ${
+          vibe === "bold" ? "shadow-[0_0_14px_rgba(217,70,239,0.8)]" : ""
+        }`}
       />
 
       {showWalker && (
@@ -88,11 +93,12 @@ const ScrollTracker: React.FC = () => {
               <PawPrint className="h-3.5 w-3.5" />
             </motion.div>
           ) : (
+            // Bold: HUD chip with a live percentage readout.
             <motion.div
               style={{ rotate: lean, scale: hop }}
-              className="mt-0.5 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 p-1 text-white shadow-[0_0_16px_rgba(236,72,153,0.8)]"
+              className="mt-1 rounded border border-fuchsia-500/60 bg-black/85 px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-wider text-fuchsia-300 shadow-[0_0_12px_rgba(217,70,239,0.6)]"
             >
-              <Zap className="h-3.5 w-3.5" />
+              <motion.span>{pctText}</motion.span>
             </motion.div>
           )}
         </motion.div>

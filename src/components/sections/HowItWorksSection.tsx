@@ -9,8 +9,68 @@ import { useMotionVibe } from "@/lib/motion";
 
 const STEP_ICONS = [Search, MessageCircle, PawPrint];
 
+// Alternating poster rotations for bold's deck-of-cards look.
+const BOLD_ROTATIONS = ["-rotate-2", "rotate-1", "-rotate-1"];
+
 const HowItWorksSection: React.FC = () => {
   const { vibe } = useMotionVibe();
+
+  // Bold: rotated neon cards on the dark stage, oversized ghost numerals
+  // bleeding out behind the content.
+  if (vibe === "bold") {
+    return (
+      <section
+        id="how-it-works"
+        className="relative overflow-hidden bg-gray-950 py-24 sm:py-28"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <SectionHeading
+              eyebrow="How it works"
+              title={<span className="text-white">Three simple steps</span>}
+              subtitle={
+                <span className="text-gray-400">
+                  No paperwork. No marketplace fees. Just people helping pets
+                  find the right home.
+                </span>
+              }
+            />
+          </ScrollReveal>
+
+          <div className="mt-20 grid grid-cols-1 gap-10 md:grid-cols-3">
+            {HOW_IT_WORKS_STEPS.map((step, i) => {
+              const Icon = STEP_ICONS[i];
+              return (
+                <ScrollReveal key={step.step} delay={i * 0.12}>
+                  <TiltCard>
+                    <div
+                      className={`group relative h-full overflow-hidden rounded-2xl border border-fuchsia-500/40 bg-[#13131e] p-8 shadow-[0_0_32px_-12px_rgba(217,70,239,0.45)] transition-transform duration-300 hover:rotate-0 ${BOLD_ROTATIONS[i]}`}
+                    >
+                      <span
+                        className="pointer-events-none absolute -right-3 -top-7 select-none text-[7rem] font-bold leading-none text-fuchsia-500/15"
+                        aria-hidden
+                      >
+                        {step.step}
+                      </span>
+                      <div className="relative mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-[0_0_16px_rgba(217,70,239,0.6)]">
+                        {Icon && <Icon className="h-6 w-6" aria-hidden />}
+                      </div>
+                      <h3 className="relative text-xl font-semibold text-white">
+                        {step.title}
+                      </h3>
+                      <p className="relative mt-2 text-sm leading-relaxed text-gray-400">
+                        {step.description}
+                      </p>
+                    </div>
+                  </TiltCard>
+                </ScrollReveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   // Calm: an editorial numbered list — generous whitespace, hairline rules,
   // oversized serif numerals, no cards or icon chips.

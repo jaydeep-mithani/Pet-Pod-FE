@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Lora } from "next/font/google";
+import { Geist, Geist_Mono, Lora, Space_Grotesk } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { FloatingNavbar, VibeLayer } from "@/components";
@@ -25,6 +25,13 @@ const lora = Lora({
   subsets: ["latin"],
 });
 
+// Techy display face used by the Bold vibe's heading typography
+// (applied via the html.vibe-bold CSS theme layer).
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-grotesk",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: `${APP_NAME} — ${APP_TAGLINE}`,
   description: APP_DESCRIPTION,
@@ -38,7 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <MotionThemeProvider>
           <AuthProvider>

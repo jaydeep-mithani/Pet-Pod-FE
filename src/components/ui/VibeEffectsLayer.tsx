@@ -9,7 +9,7 @@ import {
   useTransform,
   useVelocity,
 } from "framer-motion";
-import { Heart, PawPrint } from "lucide-react";
+import { Heart, PawPrint, Zap } from "lucide-react";
 import {
   CELEBRATE_EVENT,
   useMotionVibe,
@@ -52,8 +52,195 @@ const VibeEffectsLayer: React.FC = () => {
       </>
     );
   }
-  if (vibe === "bold") return <BoldCursorLayer />;
+  if (vibe === "bold") {
+    return (
+      <>
+        <BoldCursorLayer />
+        <SparkTrail />
+        <SpeedLines />
+      </>
+    );
+  }
   return null;
+};
+
+interface Spark {
+  id: number;
+  x: number;
+  y: number;
+  angle: number;
+  cyan: boolean;
+}
+
+let sparkId = 0;
+const SPARK_SPEED_THRESHOLD = 1.2;
+const SPARK_STEP = 60;
+const MAX_SPARKS = 12;
+
+/** Fast cursor movement throws alternating fuchsia/cyan sparks. */
+const SparkTrail: React.FC = () => {
+  const [sparks, setSparks] = useState<Spark[]>([]);
+
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    let lastX = -1;
+    let lastY = -1;
+    let lastT = 0;
+    let travelled = 0;
+    let flip = false;
+
+    const onMove = (e: PointerEvent) => {
+      const now = performance.now();
+      if (lastX < 0) {
+        lastX = e.clientX;
+        lastY = e.clientY;
+        lastT = now;
+        return;
+      }
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      const dt = Math.max(1, now - lastT);
+      const dist = Math.hypot(dx, dy);
+      const speed = dist / dt;
+
+      travelled = speed >= SPARK_SPEED_THRESHOLD ? travelled + dist : 0;
+      if (travelled >= SPARK_STEP) {
+        travelled = 0;
+        flip = !flip;
+        setSparks((curr) => [
+          ...curr.slice(-MAX_SPARKS + 1),
+          {
+            id: sparkId++,
+            x: e.clientX,
+            y: e.clientY,
+            angle: (Math.atan2(dy, dx) * 180) / Math.PI + 45,
+            cyan: flip,
+          },
+        ]);
+      }
+
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = now;
+    };
+
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
+  const removeSpark = (id: number) => {
+    setSparks((curr) => curr.filter((s) => s.id !== id));
+  };
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[44]" aria-hidden>
+      <AnimatePresence>
+        {sparks.map((spark) => (
+          <motion.div
+            key={spark.id}
+            className={
+              spark.cyan
+                ? "absolute text-cyan-300"
+                : "absolute text-fuchsia-400"
+            }
+            style={{ left: spark.x, top: spark.y, rotate: spark.angle }}
+            initial={{ opacity: 0.95, scale: 1, x: "-50%", y: "-50%" }}
+            animate={{
+              opacity: 0,
+              scale: 0.4,
+              transition: { duration: 0.35, ease: "easeOut" },
+            }}
+            onAnimationComplete={() => removeSpark(spark.id)}
+          >
+            <Zap className="h-4 w-4 fill-current" />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+interface SpeedLine {
+  id: number;
+  top: number;
+  fromLeft: boolean;
+  width: number;
+  cyan: boolean;
+}
+
+let lineId = 0;
+const LINE_VELOCITY_THRESHOLD = 1.8; // px/ms of scroll
+const MAX_LINES = 14;
+
+/** Anime-style speed lines streak in from the viewport edges on fast
+ * scrolling — the harder you flick, the more lines. */
+const SpeedLines: React.FC = () => {
+  const [lines, setLines] = useState<SpeedLine[]>([]);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let lastT = performance.now();
+    let lastSpawn = 0;
+
+    const onScroll = () => {
+      const now = performance.now();
+      const y = window.scrollY;
+      const speed = Math.abs(y - lastY) / Math.max(1, now - lastT);
+      lastY = y;
+      lastT = now;
+
+      if (speed < LINE_VELOCITY_THRESHOLD) return;
+      if (now - lastSpawn < 70) return;
+      lastSpawn = now;
+
+      const count = speed > 4 ? 3 : 2;
+      const fresh: SpeedLine[] = Array.from({ length: count }, () => ({
+        id: lineId++,
+        top: 10 + Math.random() * 80,
+        fromLeft: Math.random() > 0.5,
+        width: 70 + Math.random() * 110,
+        cyan: Math.random() > 0.5,
+      }));
+      setLines((curr) => [...curr.slice(-MAX_LINES + count), ...fresh]);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const removeLine = (id: number) => {
+    setLines((curr) => curr.filter((l) => l.id !== id));
+  };
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[44]" aria-hidden>
+      <AnimatePresence>
+        {lines.map((line) => (
+          <motion.div
+            key={line.id}
+            className={
+              line.cyan
+                ? "absolute h-[2px] rounded-full bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"
+                : "absolute h-[2px] rounded-full bg-gradient-to-r from-transparent via-fuchsia-500/80 to-transparent"
+            }
+            style={{
+              top: `${line.top}%`,
+              width: line.width,
+              ...(line.fromLeft ? { left: -20 } : { right: -20 }),
+            }}
+            initial={{ opacity: 0.9, x: line.fromLeft ? 0 : 0 }}
+            animate={{
+              opacity: 0,
+              x: line.fromLeft ? 160 : -160,
+              transition: { duration: 0.4, ease: "easeOut" },
+            }}
+            onAnimationComplete={() => removeLine(line.id)}
+          />
+        ))}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 /**
@@ -480,8 +667,23 @@ const BoldCursorLayer: React.FC = () => {
 
   const mx = useMotionValue(-400);
   const my = useMotionValue(-400);
-  const sx = useSpring(mx, { stiffness: 120, damping: 22 });
-  const sy = useSpring(my, { stiffness: 120, damping: 22 });
+  // Stiff springs = snappy HUD-reticle chase, not a lazy drift.
+  const sx = useSpring(mx, { stiffness: 550, damping: 32 });
+  const sy = useSpring(my, { stiffness: 550, damping: 32 });
+
+  // Reticle reacts to its own velocity: faster = bigger + brighter.
+  const vx = useVelocity(sx);
+  const vy = useVelocity(sy);
+  const speed = useTransform<number, number>([vx, vy], ([a, b]) =>
+    Math.hypot(a ?? 0, b ?? 0),
+  );
+  const smoothSpeed = useSpring(speed, { stiffness: 240, damping: 30 });
+  const reticleScale = useTransform(smoothSpeed, [0, 2500], [1, 1.8]);
+  const reticleOpacity = useTransform(
+    smoothSpeed,
+    [0, 120, 2500],
+    [0.4, 0.6, 1],
+  );
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
@@ -517,16 +719,12 @@ const BoldCursorLayer: React.FC = () => {
     <div className="pointer-events-none fixed inset-0 z-[45]" aria-hidden>
       {hasFinePointer && (
         <motion.div
-          style={{ x: sx, y: sy }}
-          className="absolute -left-48 -top-48 h-96 w-96 rounded-full opacity-60"
+          style={{ x: sx, y: sy, scale: reticleScale, opacity: reticleOpacity }}
+          className="absolute -left-3 -top-3 h-6 w-6"
         >
-          <div
-            className="h-full w-full rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(236,72,153,0.14) 0%, rgba(168,85,247,0.07) 40%, transparent 70%)",
-            }}
-          />
+          {/* HUD reticle: neon ring + center dot chasing the cursor */}
+          <div className="absolute inset-0 rounded-full border-2 border-fuchsia-400 shadow-[0_0_12px_rgba(217,70,239,0.8)]" />
+          <div className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300" />
         </motion.div>
       )}
 
@@ -534,16 +732,32 @@ const BoldCursorLayer: React.FC = () => {
         {waves.map((wave) => (
           <motion.div
             key={wave.id}
-            className="absolute h-10 w-10 rounded-full border-2 border-pink-400/70"
-            style={{ left: wave.x, top: wave.y, x: "-50%", y: "-50%" }}
-            initial={{ opacity: 0.8, scale: 0.4 }}
-            animate={{
-              opacity: 0,
-              scale: 3.2,
-              transition: { duration: 0.6, ease: "easeOut" },
-            }}
-            onAnimationComplete={() => removeWave(wave.id)}
-          />
+            className="absolute"
+            style={{ left: wave.x, top: wave.y }}
+          >
+            {/* Double shockwave: fast fuchsia ring + slower cyan chaser */}
+            <motion.div
+              className="absolute h-10 w-10 rounded-full border-2 border-fuchsia-400/80"
+              style={{ x: "-50%", y: "-50%" }}
+              initial={{ opacity: 0.9, scale: 0.4 }}
+              animate={{
+                opacity: 0,
+                scale: 3.4,
+                transition: { duration: 0.5, ease: "easeOut" },
+              }}
+            />
+            <motion.div
+              className="absolute h-10 w-10 rounded-full border border-cyan-300/70"
+              style={{ x: "-50%", y: "-50%" }}
+              initial={{ opacity: 0.8, scale: 0.2 }}
+              animate={{
+                opacity: 0,
+                scale: 2.4,
+                transition: { duration: 0.7, ease: "easeOut", delay: 0.08 },
+              }}
+              onAnimationComplete={() => removeWave(wave.id)}
+            />
+          </motion.div>
         ))}
       </AnimatePresence>
     </div>

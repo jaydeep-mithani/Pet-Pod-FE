@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
-import { ChevronDown, Heart, PawPrint } from "lucide-react";
+import { ChevronDown, Heart, PawPrint, Zap } from "lucide-react";
 import Button from "../ui/Button";
 import { ROUTES } from "@/lib/routes";
 import { useMotionVibe, type MotionVibe } from "@/lib/motion";
@@ -62,8 +62,8 @@ function wordVariants(vibe: MotionVibe, reducedLike: boolean): Variants {
   }
 }
 
-/** Decorative floating shapes — playful/bold only. */
-const FLOURISHES = [
+/** Decorative floating shapes — playful/bold only, themed per vibe. */
+const PLAYFUL_FLOURISHES = [
   { Icon: PawPrint, className: "left-[8%] top-[22%] h-8 w-8", delay: 0 },
   { Icon: Heart, className: "right-[12%] top-[30%] h-6 w-6", delay: 1.2 },
   {
@@ -71,6 +71,12 @@ const FLOURISHES = [
     className: "right-[20%] bottom-[24%] h-10 w-10",
     delay: 0.6,
   },
+] as const;
+
+const BOLD_FLOURISHES = [
+  { Icon: Zap, className: "left-[10%] top-[18%] h-10 w-10", delay: 0 },
+  { Icon: Zap, className: "right-[14%] top-[36%] h-7 w-7", delay: 0.9 },
+  { Icon: Zap, className: "right-[26%] bottom-[30%] h-12 w-12", delay: 0.4 },
 ] as const;
 
 const HeroSection: React.FC = () => {
@@ -88,8 +94,11 @@ const HeroSection: React.FC = () => {
 
   const words = wordVariants(vibe, reduced);
   const stagger = tokens.reveal.stagger;
-  // Calm gets an editorial, left-aligned hero; playful/bold stay centered.
+  // Calm gets an editorial, left-aligned hero; bold gets a bottom-anchored
+  // poster; playful stays centered.
   const editorial = vibe === "calm";
+  const poster = vibe === "bold";
+  const flourishes = poster ? BOLD_FLOURISHES : PLAYFUL_FLOURISHES;
 
   const container: Variants = {
     hidden: {},
@@ -124,10 +133,10 @@ const HeroSection: React.FC = () => {
 
       {tokens.flourish && (
         <div className="absolute inset-0 z-10 overflow-hidden" aria-hidden>
-          {FLOURISHES.map(({ Icon, className, delay }, i) => (
+          {flourishes.map(({ Icon, className, delay }, i) => (
             <motion.div
               key={i}
-              className={`absolute text-white/15 ${className}`}
+              className={`absolute ${poster ? "text-fuchsia-400/25" : "text-white/15"} ${className}`}
               animate={{
                 y: [0, -18, -6, 0],
                 rotate: [0, 8, -6, 0],
@@ -150,7 +159,9 @@ const HeroSection: React.FC = () => {
         className={
           editorial
             ? "relative z-20 mx-auto flex h-full w-full max-w-7xl flex-col items-start justify-center px-6 text-left text-white sm:px-10 lg:px-16"
-            : "relative z-20 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6 lg:px-8"
+            : poster
+              ? "relative z-20 mx-auto flex h-full w-full max-w-7xl flex-col items-start justify-end px-6 pb-28 text-left text-white sm:px-10 lg:px-16"
+              : "relative z-20 flex h-full flex-col items-center justify-center px-4 text-center text-white sm:px-6 lg:px-8"
         }
       >
         <motion.div
@@ -158,7 +169,7 @@ const HeroSection: React.FC = () => {
           initial="hidden"
           animate="visible"
           className={
-            editorial
+            editorial || poster
               ? "flex flex-col items-start"
               : "flex flex-col items-center"
           }
@@ -169,6 +180,13 @@ const HeroSection: React.FC = () => {
               className="text-xs font-medium uppercase tracking-[0.25em] text-teal-100/90"
             >
               No money. Just love.
+            </motion.span>
+          ) : poster ? (
+            <motion.span
+              variants={words}
+              className="font-mono text-xs uppercase tracking-[0.35em] text-cyan-300"
+            >
+              {"// no money. just love."}
             </motion.span>
           ) : (
             <motion.div
@@ -181,7 +199,11 @@ const HeroSection: React.FC = () => {
           )}
 
           <h1
-            className="mt-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+            className={
+              poster
+                ? "mt-5 max-w-5xl -rotate-1 text-5xl font-bold leading-[0.95] tracking-tight sm:text-7xl md:text-8xl lg:text-9xl"
+                : "mt-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+            }
             style={{ perspective: 800 }}
           >
             <span className="block">
@@ -199,13 +221,21 @@ const HeroSection: React.FC = () => {
               bg-clip-text lives on each word, NOT the parent: clipping on an
               ancestor of composited (animated) children breaks in Chromium —
               the text turns invisible. Same-element clip + transform is safe.
+              Bold skips the gradient for hollow outline-stroke poster type.
             */}
             <span className="block">
               {HEADLINE_LINE_2.map((word) => (
                 <motion.span
                   key={word}
                   variants={words}
-                  className="inline-block whitespace-pre bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 bg-clip-text text-transparent"
+                  className={
+                    poster
+                      ? "inline-block whitespace-pre text-transparent"
+                      : "inline-block whitespace-pre bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 bg-clip-text text-transparent"
+                  }
+                  style={
+                    poster ? { WebkitTextStroke: "2px #e879f9" } : undefined
+                  }
                 >
                   {word}{" "}
                 </motion.span>
