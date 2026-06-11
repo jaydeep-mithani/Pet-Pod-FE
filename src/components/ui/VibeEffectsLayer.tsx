@@ -6,6 +6,8 @@ import {
   motion,
   useMotionValue,
   useSpring,
+  useTransform,
+  useVelocity,
 } from "framer-motion";
 import { Heart, PawPrint } from "lucide-react";
 import {
@@ -44,12 +46,171 @@ const VibeEffectsLayer: React.FC = () => {
       <>
         <PawStamps />
         <PawTrail />
+        <CursorCompanion />
+        <ScrollPawTrail />
         <CelebrationBursts />
       </>
     );
   }
   if (vibe === "bold") return <BoldCursorLayer />;
   return null;
+};
+
+/**
+ * Slow-speed cursor effect: a tiny paw companion chases the cursor with
+ * springy lag. At slow speeds the lag itself is the effect (it visibly
+ * trails behind and catches up); at high speeds it stretches out and
+ * brightens while the PawTrail handles the footprints.
+ */
+const CursorCompanion: React.FC = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  const mx = useMotionValue(-100);
+  const my = useMotionValue(-100);
+  // Soft spring = visible lag at walking pace.
+  const sx = useSpring(mx, { stiffness: 140, damping: 16, mass: 0.6 });
+  const sy = useSpring(my, { stiffness: 140, damping: 16, mass: 0.6 });
+
+  // Brightness/size react to how fast the companion itself is moving.
+  const vx = useVelocity(sx);
+  const vy = useVelocity(sy);
+  const speed = useTransform<number, number>([vx, vy], ([a, b]) =>
+    Math.hypot(a ?? 0, b ?? 0),
+  );
+  const smoothSpeed = useSpring(speed, { stiffness: 200, damping: 30 });
+  const opacity = useTransform(smoothSpeed, [0, 200, 1600], [0.25, 0.45, 0.9]);
+  const scale = useTransform(smoothSpeed, [0, 1600], [0.85, 1.5]);
+
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    let moved = false;
+    const onMove = (e: PointerEvent) => {
+      if (!moved) {
+        moved = true;
+        // Defer enabling to the next frame so the dot doesn't flash at its
+        // offscreen origin.
+        requestAnimationFrame(() => setEnabled(true));
+      }
+      mx.set(e.clientX + 14);
+      my.set(e.clientY + 18);
+    };
+
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [mx, my]);
+
+  if (!enabled) return null;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[44]" aria-hidden>
+      <motion.div
+        style={{ x: sx, y: sy, opacity, scale }}
+        className="absolute -left-2 -top-2 text-pink-500"
+      >
+        <PawPrint className="h-4 w-4 fill-pink-200" />
+      </motion.div>
+    </div>
+  );
+};
+
+interface EdgePaw {
+  id: number;
+  y: number;
+  xOffset: number;
+  rotate: number;
+  size: number;
+  opacity: number;
+}
+
+let edgePawId = 0;
+const EDGE_STEP = 150; // px of scroll between footprints — slow scrolls count
+const EDGE_LANE_ADVANCE = 56; // how far each print advances along the lane
+const MAX_EDGE_PAWS = 10;
+
+/**
+ * Scroll-distance paw trail along the right edge of the viewport: the page
+ * gets "walked" as you scroll. Triggered by distance (so slow scrolling
+ * leaves tracks too); print size and opacity scale with scroll velocity so
+ * fast flicks stomp harder. Works on every page, mouse or touch.
+ */
+const ScrollPawTrail: React.FC = () => {
+  const [paws, setPaws] = useState<EdgePaw[]>([]);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let lastT = performance.now();
+    let travelled = 0;
+    let lane = window.innerHeight * 0.3;
+    let side = 1;
+
+    const onScroll = () => {
+      const now = performance.now();
+      const y = window.scrollY;
+      const delta = y - lastY;
+      const dt = Math.max(1, now - lastT);
+      const speed = Math.abs(delta) / dt; // px/ms
+      lastY = y;
+      lastT = now;
+
+      travelled += Math.abs(delta);
+      if (travelled < EDGE_STEP) return;
+      travelled = 0;
+
+      // Walk the lane in the direction of scroll, wrapping within a band.
+      const dir = delta >= 0 ? 1 : -1;
+      lane += EDGE_LANE_ADVANCE * dir;
+      const minLane = window.innerHeight * 0.15;
+      const maxLane = window.innerHeight * 0.85;
+      if (lane > maxLane) lane = minLane;
+      if (lane < minLane) lane = maxLane;
+      side = -side;
+
+      // Faster scroll = bigger, bolder stomps.
+      const intensity = Math.min(speed / 3, 1);
+      setPaws((curr) => [
+        ...curr.slice(-MAX_EDGE_PAWS + 1),
+        {
+          id: edgePawId++,
+          y: lane,
+          xOffset: 26 + side * 9,
+          rotate: dir === 1 ? 180 : 0,
+          size: 16 + intensity * 14,
+          opacity: 0.35 + intensity * 0.45,
+        },
+      ]);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const removePaw = (id: number) => {
+    setPaws((curr) => curr.filter((p) => p.id !== id));
+  };
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[44]" aria-hidden>
+      <AnimatePresence>
+        {paws.map((paw) => (
+          <motion.div
+            key={paw.id}
+            className="absolute text-pink-400"
+            style={{ right: paw.xOffset, top: paw.y, rotate: paw.rotate }}
+            initial={{ opacity: paw.opacity, scale: 0.5 }}
+            animate={{
+              opacity: 0,
+              scale: 1,
+              transition: { duration: 1.1, ease: "easeOut" },
+            }}
+            onAnimationComplete={() => removePaw(paw.id)}
+          >
+            <PawPrint style={{ width: paw.size, height: paw.size }} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 interface TrailPaw {
@@ -60,8 +221,8 @@ interface TrailPaw {
 }
 
 let trailId = 0;
-const TRAIL_SPEED_THRESHOLD = 1.3; // px per ms — only "running" cursors track
-const TRAIL_STEP = 84; // px of travel between footprints
+const TRAIL_SPEED_THRESHOLD = 1.0; // px per ms — a brisk move starts tracking
+const TRAIL_STEP = 72; // px of travel between footprints
 const MAX_TRAIL = 14;
 
 /**

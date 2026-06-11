@@ -88,8 +88,8 @@ input[type="checkbox"]:checked::after {
    rules beat inherited cursor). Touch devices ignore cursor entirely. */
 html.vibe-playful body {
   cursor:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 28 28'><g fill='%23ec4899' stroke='white' stroke-width='1.5'><circle cx='7' cy='9' r='3'/><circle cx='14' cy='6' r='3'/><circle cx='21' cy='9' r='3'/><ellipse cx='14' cy='18' rx='7' ry='6'/></g></svg>")
-      13 13,
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 28 28'><g transform='rotate(-35 14 14)' fill='%23ec4899' stroke='white' stroke-width='1.5'><circle cx='7' cy='9' r='3'/><circle cx='14' cy='6' r='3'/><circle cx='21' cy='9' r='3'/><ellipse cx='14' cy='18' rx='7' ry='6'/></g></svg>")
+      8 8,
     auto;
 }
 
@@ -100,8 +100,8 @@ html.vibe-playful label,
 html.vibe-playful summary,
 html.vibe-playful select {
   cursor:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><g fill='%239333ea' stroke='white' stroke-width='1.5'><circle cx='7' cy='9' r='3'/><circle cx='14' cy='6' r='3'/><circle cx='21' cy='9' r='3'/><ellipse cx='14' cy='18' rx='7' ry='6'/></g></svg>")
-      14 14,
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><g transform='rotate(-35 14 14)' fill='%239333ea' stroke='white' stroke-width='1.5'><circle cx='7' cy='9' r='3'/><circle cx='14' cy='6' r='3'/><circle cx='21' cy='9' r='3'/><ellipse cx='14' cy='18' rx='7' ry='6'/></g></svg>")
+      9 9,
     pointer;
 }
 
