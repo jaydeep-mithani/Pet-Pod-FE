@@ -1,10 +1,27 @@
 "use client";
 
 import { config } from "@/config";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 
 interface GoogleSignInButtonProps {
   label?: string;
 }
+
+// Mirrors Button's per-vibe shapeClasses: playful pill, calm quiet rectangle,
+// bold sharp rectangle (no skew here — it's an anchor, not a motion.button).
+const SHAPE: Record<MotionVibe, string> = {
+  playful: "rounded-full",
+  calm: "rounded-lg",
+  bold: "rounded-[3px]",
+};
+
+// hover:border-gray-300 / hover:shadow-md aren't theme-remapped, so the hover
+// treatment branches: calm stays flat and quiet, bold lifts with a neon glow.
+const HOVER: Record<MotionVibe, string> = {
+  playful: "hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md",
+  calm: "hover:border-stone-300 hover:bg-stone-50",
+  bold: "hover:-translate-y-0.5 hover:border-fuchsia-500/50 hover:shadow-[0_0_24px_-2px_rgba(217,70,239,0.45)]",
+};
 
 /**
  * Initiates the Google OAuth flow by navigating the browser to the BE's
@@ -15,12 +32,13 @@ interface GoogleSignInButtonProps {
 const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   label = "Continue with Google",
 }) => {
+  const { vibe } = useMotionVibe();
   const href = `${config.apiBaseUrl}/auth/google`;
 
   return (
     <a
       href={href}
-      className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-gray-200 bg-white px-6 py-3 text-base font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:ring-offset-2"
+      className={`inline-flex w-full items-center justify-center gap-3 border border-gray-200 bg-white px-6 py-3 text-base font-semibold text-gray-700 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:ring-offset-2 ${SHAPE[vibe]} ${HOVER[vibe]}`}
     >
       <GoogleLogo className="h-5 w-5" />
       {label}

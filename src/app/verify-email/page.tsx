@@ -10,14 +10,50 @@ import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { authService } from "@/lib/services/auth.service";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES, postAuthRedirect } from "@/lib/routes";
-import { celebrate } from "@/lib/motion";
+import { celebrate, useMotionVibe, type MotionVibe } from "@/lib/motion";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 const CODE_LENGTH = 6;
 
+// Standalone page wash — these gradient stops aren't covered by the global
+// theme layers, so it branches: calm gets a stone/teal morning wash, bold a
+// near-black stage with a faint neon radial bleeding from the top.
+const PAGE_BG: Record<MotionVibe, string> = {
+  playful: "bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100",
+  calm: "bg-gradient-to-br from-stone-50 via-teal-50 to-stone-100",
+  bold: "bg-[#0a0a12] bg-[radial-gradient(70%_55%_at_50%_0%,rgba(217,70,239,0.14),transparent_70%)]",
+};
+
+// Mirrors Button's per-vibe shapeClasses for the modal's plain buttons.
+const BUTTON_SHAPE: Record<MotionVibe, string> = {
+  playful: "rounded-full",
+  calm: "rounded-lg",
+  bold: "rounded-[3px]",
+};
+
+// hover:bg-gray-50 isn't remapped in bold (it would flash light-on-dark), so
+// the neutral button's hover branches per vibe.
+const NEUTRAL_HOVER: Record<MotionVibe, string> = {
+  playful: "hover:bg-gray-50",
+  calm: "hover:bg-stone-50",
+  bold: "hover:border-fuchsia-500/40 hover:bg-white/5",
+};
+
+function PageShell({ children }: { children: React.ReactNode }) {
+  const { vibe } = useMotionVibe();
+  return (
+    <main
+      className={`flex min-h-screen items-center justify-center px-4 py-12 ${PAGE_BG[vibe]}`}
+    >
+      {children}
+    </main>
+  );
+}
+
 function VerifyEmailContent() {
   const status = useRequireAuth();
   const { user, logout, refresh } = useAuth();
+  const { vibe } = useMotionVibe();
   const router = useRouter();
   const params = useSearchParams();
 
@@ -185,14 +221,14 @@ function VerifyEmailContent() {
 
   if (status !== "authed" || !user) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100">
+      <PageShell>
         <p className="text-sm text-gray-600">Loading…</p>
-      </main>
+      </PageShell>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100 px-4 py-12">
+    <PageShell>
       <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl sm:p-10">
         <div className="text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 shadow-lg">
@@ -324,7 +360,7 @@ function VerifyEmailContent() {
           </div>
         </form>
       </Modal>
-    </main>
+    </PageShell>
   );
 }
 

@@ -1,8 +1,30 @@
+"use client";
+
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { APP_NAME } from "@/constants";
 import { ROUTES } from "@/lib/routes";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 import { cn } from "@/utils";
+
+// The hero-photo wash is identity-defining and uses opacity-suffixed gradient
+// stops that the global theme layers don't remap, so it branches here:
+// playful keeps the candy pink/purple, calm gets a muted teal/stone dusk,
+// bold gets a fuchsia-to-indigo neon night.
+const HERO_OVERLAY: Record<MotionVibe, string> = {
+  playful:
+    "bg-gradient-to-br from-pink-600/70 via-rose-600/50 to-purple-700/80",
+  calm: "bg-gradient-to-br from-teal-900/70 via-stone-900/45 to-stone-950/80",
+  bold: "bg-gradient-to-br from-fuchsia-600/60 via-purple-950/70 to-indigo-950/85",
+};
+
+// Page background behind the form card. bg-gray-50 auto-flips dark in bold;
+// calm trades the cool gray for its warm-sand stone.
+const PAGE_BG: Record<MotionVibe, string> = {
+  playful: "bg-gray-50",
+  calm: "bg-stone-50",
+  bold: "bg-gray-50",
+};
 
 interface AuthLayoutProps {
   title: string;
@@ -25,10 +47,13 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   footer,
   className,
 }) => {
+  const { vibe } = useMotionVibe();
+
   return (
     <div
       className={cn(
-        "relative isolate flex min-h-screen w-full overflow-hidden bg-gray-50",
+        "relative isolate flex min-h-screen w-full overflow-hidden",
+        PAGE_BG[vibe],
         className,
       )}
     >
@@ -47,7 +72,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
         style={{ backgroundImage: `url(${heroImageUrl})` }}
         aria-hidden
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-600/70 via-rose-600/50 to-purple-700/80" />
+        <div className={cn("absolute inset-0", HERO_OVERLAY[vibe])} />
         <div className="relative flex h-full flex-col justify-between p-12 text-white">
           <Link
             href={ROUTES.home}
@@ -64,7 +89,13 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             </h1>
             <p className="mt-4 text-base text-white/85">{heroSubtitle}</p>
           </div>
-          <p className="text-xs text-white/60">No money. Just love.</p>
+          {vibe === "bold" ? (
+            <p className="font-mono text-xs tracking-wider text-cyan-300/80">
+              {"// no money. just love."}
+            </p>
+          ) : (
+            <p className="text-xs text-white/60">No money. Just love.</p>
+          )}
         </div>
       </aside>
 
