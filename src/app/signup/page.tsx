@@ -14,14 +14,24 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import { ROUTES, postAuthRedirect } from "@/lib/routes";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ApiError } from "@/lib/api/errors";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 import { signupSchema, type SignupValues } from "@/lib/validation/auth";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=1600&q=80";
 
+// bg-gray-200 hairlines aren't remapped (they'd stay light on bold's dark
+// card), so the "or use email" divider rule branches per vibe.
+const DIVIDER_RULE: Record<MotionVibe, string> = {
+  playful: "bg-gray-200",
+  calm: "bg-stone-200",
+  bold: "bg-fuchsia-500/25",
+};
+
 export default function SignupPage() {
   const router = useRouter();
   const { signup, status, user } = useAuth();
+  const { vibe } = useMotionVibe();
 
   // Once authed, route through the verify → welcome → home chain. Centralised
   // in postAuthRedirect so signup / login / welcome all agree.
@@ -84,9 +94,9 @@ export default function SignupPage() {
       <GoogleSignInButton label="Sign up with Google" />
 
       <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-wider text-gray-400">
-        <span className="h-px flex-1 bg-gray-200" />
-        <span>or use email</span>
-        <span className="h-px flex-1 bg-gray-200" />
+        <span className={`h-px flex-1 ${DIVIDER_RULE[vibe]}`} />
+        <span>{vibe === "bold" ? "// or use email" : "or use email"}</span>
+        <span className={`h-px flex-1 ${DIVIDER_RULE[vibe]}`} />
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

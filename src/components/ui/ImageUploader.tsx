@@ -27,7 +27,36 @@ import {
   type UploadedPhoto,
 } from "@/lib/services/uploads.service";
 import { ApiError } from "@/lib/api/errors";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
+import Button from "./Button";
 import { cn } from "@/utils";
+
+// border-gray-300 / bg-pink-* aren't remapped by the global theme layers, so
+// the dropzone chrome branches per vibe: calm trades candy for teal/stone
+// hairlines, bold gets a neon dashed frame that brightens on drag.
+const DROPZONE_CHROME: Record<
+  MotionVibe,
+  { idle: string; active: string; icon: string; dragRing: string }
+> = {
+  playful: {
+    idle: "border-gray-300 bg-gray-50 hover:border-pink-300 hover:bg-pink-50/40",
+    active: "border-pink-400 bg-pink-50/60",
+    icon: "text-pink-500",
+    dragRing: "ring-2 ring-pink-400",
+  },
+  calm: {
+    idle: "border-stone-300 bg-stone-50 hover:border-teal-400 hover:bg-teal-50/40",
+    active: "border-teal-500 bg-teal-50/60",
+    icon: "text-teal-700",
+    dragRing: "ring-2 ring-teal-500",
+  },
+  bold: {
+    idle: "border-fuchsia-500/30 bg-white/5 hover:border-fuchsia-500/60 hover:bg-fuchsia-500/5",
+    active: "border-fuchsia-500/70 bg-fuchsia-500/10",
+    icon: "text-fuchsia-400",
+    dragRing: "ring-2 ring-fuchsia-500/70",
+  },
+};
 
 export interface PhotoEntry {
   url: string;
@@ -80,6 +109,7 @@ interface SortableTileProps {
   photo: PhotoEntry;
   reorderable: boolean;
   removing: boolean;
+  dragRing: string;
   onRemove: () => void;
 }
 
@@ -87,6 +117,7 @@ const SortableTile: React.FC<SortableTileProps> = ({
   photo,
   reorderable,
   removing,
+  dragRing,
   onRemove,
 }) => {
   const sortableKey = keyFor(photo);
@@ -114,7 +145,7 @@ const SortableTile: React.FC<SortableTileProps> = ({
       className={cn(
         "group relative aspect-square overflow-hidden rounded-xl ring-1 ring-gray-200 bg-gray-100 touch-none",
         reorderable && "cursor-grab active:cursor-grabbing",
-        isDragging && "shadow-xl ring-2 ring-pink-400",
+        isDragging && cn("shadow-xl", dragRing),
       )}
     >
       <Image
@@ -161,6 +192,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   disabled,
   className,
 }) => {
+  const { vibe } = useMotionVibe();
+  const chrome = DROPZONE_CHROME[vibe];
   const [pending, setPending] = useState<PendingUpload[]>([]);
   const [removing, setRemoving] = useState<Set<string>>(new Set());
   const pendingRef = useRef<PendingUpload[]>([]);
@@ -309,14 +342,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         {...getRootProps()}
         className={cn(
           "relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-8 text-center transition-colors",
-          isDragActive
-            ? "border-pink-400 bg-pink-50/60"
-            : "border-gray-300 bg-gray-50 hover:border-pink-300 hover:bg-pink-50/40",
+          isDragActive ? chrome.active : chrome.idle,
           (disabled || slotsLeft === 0) && "opacity-60",
         )}
       >
         <input {...getInputProps()} />
-        <ImagePlus className="h-7 w-7 text-pink-500" aria-hidden />
+        <ImagePlus className={cn("h-7 w-7", chrome.icon)} aria-hidden />
         <div className="text-sm font-medium text-gray-800">
           {slotsLeft === 0
             ? `Maximum ${max} photos`
@@ -325,15 +356,16 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               : "Drag photos here, or"}
         </div>
         {slotsLeft > 0 && (
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="sm"
             onClick={open}
             disabled={disabled}
-            className="inline-flex items-center gap-1.5 rounded-full bg-pink-600 px-4 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-pink-700 disabled:opacity-60"
+            icon={<Upload className="h-3.5 w-3.5" aria-hidden />}
           >
-            <Upload className="h-3.5 w-3.5" aria-hidden />
             Choose files
-          </button>
+          </Button>
         )}
         <p className="text-xs text-gray-500">
           JPG, PNG, WebP, HEIC, AVIF · up to 5 MB · {slotsLeft} of {max} slots
@@ -365,6 +397,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                     photo={photo}
                     reorderable={reorderable}
                     removing={removing.has(key)}
+                    dragRing={chrome.dragRing}
                     onRemove={() => void handleRemoveExisting(photo)}
                   />
                 );

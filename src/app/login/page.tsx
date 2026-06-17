@@ -14,15 +14,39 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import { ROUTES, postAuthRedirect } from "@/lib/routes";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ApiError } from "@/lib/api/errors";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 import { loginSchema, type LoginValues } from "@/lib/validation/auth";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=1600&q=80";
 
+// bg-gray-200 hairlines aren't remapped (they'd stay light on bold's dark
+// card), so the "or use email" divider rule branches per vibe.
+const DIVIDER_RULE: Record<MotionVibe, string> = {
+  playful: "bg-gray-200",
+  calm: "bg-stone-200",
+  bold: "bg-fuchsia-500/25",
+};
+
+// The post-reset success banner. emerald isn't remapped, so calm trades it for
+// a quiet teal note and bold for a neon-edged dark card.
+const RESET_BANNER: Record<MotionVibe, string> = {
+  playful: "border-emerald-200 bg-emerald-50 text-emerald-900",
+  calm: "border-teal-200 bg-teal-50 text-teal-900",
+  bold: "border-cyan-400/40 bg-cyan-400/10 text-cyan-200",
+};
+
+const RESET_BANNER_ICON: Record<MotionVibe, string> = {
+  playful: "text-emerald-600",
+  calm: "text-teal-600",
+  bold: "text-cyan-300",
+};
+
 function LoginPageContent() {
   const router = useRouter();
   const params = useSearchParams();
   const { login, status, user } = useAuth();
+  const { vibe } = useMotionVibe();
 
   const nextPath = params.get("next") ?? ROUTES.home;
   const oauthError = params.get("error") === "oauth";
@@ -108,10 +132,10 @@ function LoginPageContent() {
         <div
           role="status"
           aria-live="polite"
-          className="mb-5 flex items-start gap-2.5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
+          className={`mb-5 flex items-start gap-2.5 rounded-2xl border p-4 text-sm ${RESET_BANNER[vibe]}`}
         >
           <CheckCircle2
-            className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600"
+            className={`mt-0.5 h-4 w-4 shrink-0 ${RESET_BANNER_ICON[vibe]}`}
             aria-hidden
           />
           <p>Password updated. Sign in with your new password to continue.</p>
@@ -121,9 +145,9 @@ function LoginPageContent() {
       <GoogleSignInButton label="Continue with Google" />
 
       <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-wider text-gray-400">
-        <span className="h-px flex-1 bg-gray-200" />
-        <span>or use email</span>
-        <span className="h-px flex-1 bg-gray-200" />
+        <span className={`h-px flex-1 ${DIVIDER_RULE[vibe]}`} />
+        <span>{vibe === "bold" ? "// or use email" : "or use email"}</span>
+        <span className={`h-px flex-1 ${DIVIDER_RULE[vibe]}`} />
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

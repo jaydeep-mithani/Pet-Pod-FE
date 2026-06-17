@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart, PlusCircle } from "lucide-react";
+import { Heart } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -8,9 +8,9 @@ import {
   FinalCTASection,
   Footer,
   PetCard,
-  SectionHeading,
   VelocityTilt,
 } from "@/components";
+import BrowseHeader from "./BrowseHeader";
 import { petsService } from "@/lib/services";
 import { ROUTES } from "@/lib/routes";
 import type { PetListItem } from "@/types";
@@ -30,24 +30,7 @@ export default async function PetsBrowsePage() {
     <main className="min-h-screen bg-white">
       <section className="bg-gradient-to-b from-rose-50/60 to-white pb-12 pt-32 sm:pt-36">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-            <SectionHeading
-              align="left"
-              eyebrow="Pets near you"
-              title="Looking for a new home"
-              subtitle="Real animals shared by their current owners. Read the story, message the owner, and meet on your own terms."
-              className="!mx-0"
-            />
-            <Link href={ROUTES.newListing}>
-              <Button
-                variant="primary"
-                size="md"
-                icon={<PlusCircle className="h-5 w-5" />}
-              >
-                List a pet
-              </Button>
-            </Link>
-          </div>
+          <BrowseHeader />
         </div>
       </section>
 

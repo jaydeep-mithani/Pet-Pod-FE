@@ -2,6 +2,8 @@
 
 import { forwardRef, useId } from "react";
 import { ChevronDown } from "lucide-react";
+import { useMotionVibe } from "@/lib/motion";
+import { FIELD_CHROME } from "./Input";
 import { cn } from "@/utils";
 
 interface SelectOption {
@@ -36,6 +38,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
   },
   ref,
 ) {
+  const { vibe } = useMotionVibe();
   const reactId = useId();
   const inputId = id ?? reactId;
 
@@ -53,8 +56,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
       <div
         className={cn(
           "relative flex items-center rounded-xl border-2 bg-white transition-all",
-          "focus-within:border-transparent focus-within:ring-2 focus-within:ring-pink-500",
-          error ? "border-red-400" : "border-gray-200 hover:border-pink-200",
+          FIELD_CHROME[vibe].focus,
+          error
+            ? "border-red-400"
+            : cn("border-gray-200", FIELD_CHROME[vibe].hover),
           rest.disabled && "cursor-not-allowed opacity-60",
         )}
       >
