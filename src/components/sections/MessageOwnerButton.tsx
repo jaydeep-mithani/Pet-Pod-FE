@@ -35,6 +35,13 @@ const MessageOwnerButton: React.FC<MessageOwnerButtonProps> = ({
       );
       return;
     }
+    if (user && !user.emailVerified) {
+      toast.info("Verify your email to start a conversation.");
+      router.push(
+        `${ROUTES.verifyEmail}?next=${encodeURIComponent(ROUTES.petDetail(petId))}`,
+      );
+      return;
+    }
     setBusy(true);
     try {
       const conv = await conversationsService.createOrGet(petId);

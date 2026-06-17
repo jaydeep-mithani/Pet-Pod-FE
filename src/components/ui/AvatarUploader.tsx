@@ -7,7 +7,40 @@ import { Camera, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { uploadsService } from "@/lib/services/uploads.service";
 import { ApiError } from "@/lib/api/errors";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 import { cn } from "@/utils";
+
+// ring-pink-* / the pink-rose placeholder fill / hover:bg-gray-100 aren't
+// remapped by the global theme layers, so the avatar chrome branches per vibe.
+const AVATAR_CHROME: Record<
+  MotionVibe,
+  {
+    idleRing: string;
+    dragRing: string;
+    placeholder: string;
+    clearHover: string;
+  }
+> = {
+  playful: {
+    idleRing: "ring-2 ring-gray-200 hover:ring-pink-300",
+    dragRing: "ring-4 ring-pink-300",
+    placeholder: "bg-gradient-to-br from-pink-100 to-rose-200 text-pink-700",
+    clearHover: "hover:bg-gray-100 hover:text-gray-900",
+  },
+  calm: {
+    idleRing: "ring-2 ring-stone-200 hover:ring-teal-400",
+    dragRing: "ring-4 ring-teal-400",
+    placeholder: "bg-gradient-to-br from-teal-50 to-stone-200 text-teal-800",
+    clearHover: "hover:bg-stone-100 hover:text-gray-900",
+  },
+  bold: {
+    idleRing: "ring-2 ring-fuchsia-500/30 hover:ring-fuchsia-500/60",
+    dragRing: "ring-4 ring-fuchsia-500/60",
+    placeholder:
+      "bg-gradient-to-br from-fuchsia-500/20 to-indigo-500/20 text-fuchsia-300",
+    clearHover: "hover:bg-white/5 hover:text-white",
+  },
+};
 
 interface AvatarUploaderProps {
   initialUrl?: string | null;
@@ -35,6 +68,8 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
   size = 128,
   disabled,
 }) => {
+  const { vibe } = useMotionVibe();
+  const chrome = AVATAR_CHROME[vibe];
   const [url, setUrl] = useState<string | null>(initialUrl ?? null);
   const [progress, setProgress] = useState<number | null>(null);
   const [previewBlob, setPreviewBlob] = useState<string | null>(null);
@@ -127,9 +162,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         style={{ width: size, height: size }}
         className={cn(
           "group relative inline-flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full transition-all",
-          isDragActive
-            ? "ring-4 ring-pink-300"
-            : "ring-2 ring-gray-200 hover:ring-pink-300",
+          isDragActive ? chrome.dragRing : chrome.idleRing,
           (disabled || uploading) && "cursor-not-allowed opacity-80",
         )}
         onClick={!disabled && !uploading ? open : undefined}
@@ -144,7 +177,12 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-pink-100 to-rose-200 text-pink-700">
+          <div
+            className={cn(
+              "flex h-full w-full items-center justify-center",
+              chrome.placeholder,
+            )}
+          >
             <Camera className="h-7 w-7" aria-hidden />
           </div>
         )}
@@ -167,7 +205,10 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({
           type="button"
           onClick={() => void handleClear()}
           disabled={disabled}
-          className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-60"
+          className={cn(
+            "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-gray-600 disabled:opacity-60",
+            chrome.clearHover,
+          )}
         >
           <X className="h-3.5 w-3.5" aria-hidden />
           Remove photo

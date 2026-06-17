@@ -4,13 +4,14 @@ import Button from "../ui/Button";
 import PetCard from "../ui/PetCard";
 import ScrollReveal from "../ui/ScrollReveal";
 import SectionHeading from "../ui/SectionHeading";
+import VelocityTilt from "../ui/VelocityTilt";
 import { petsService } from "@/lib/services";
 import { ROUTES } from "@/lib/routes";
 import type { PetListItem } from "@/types";
 
 async function fetchFeatured(): Promise<PetListItem[]> {
   try {
-    return await petsService.listFeatured(6);
+    return await petsService.listFeatured(8);
   } catch {
     return [];
   }
@@ -32,13 +33,13 @@ const LivePetsPreviewSection: React.FC = async () => {
 
         {pets.length > 0 ? (
           <>
-            <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <VelocityTilt className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {pets.map((pet, i) => (
                 <ScrollReveal key={pet.id} delay={i * 0.05}>
-                  <PetCard pet={pet} priority={i < 3} />
+                  <PetCard pet={pet} priority={i < 4} />
                 </ScrollReveal>
               ))}
-            </div>
+            </VelocityTilt>
 
             <ScrollReveal delay={0.1}>
               <div className="mt-12 flex justify-center">

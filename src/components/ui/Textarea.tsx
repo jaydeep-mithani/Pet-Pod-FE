@@ -8,6 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { useMotionVibe } from "@/lib/motion";
+import { FIELD_CHROME } from "./Input";
 import { cn } from "@/utils";
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -36,6 +38,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     },
     ref,
   ) {
+    const { vibe } = useMotionVibe();
     const reactId = useId();
     const inputId = id ?? reactId;
 
@@ -96,8 +99,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <div
           className={cn(
             "rounded-xl border-2 bg-white px-3 py-2 transition-all",
-            "focus-within:border-transparent focus-within:ring-2 focus-within:ring-pink-500",
-            error ? "border-red-400" : "border-gray-200 hover:border-pink-200",
+            FIELD_CHROME[vibe].focus,
+            error
+              ? "border-red-400"
+              : cn("border-gray-200", FIELD_CHROME[vibe].hover),
           )}
         >
           <textarea

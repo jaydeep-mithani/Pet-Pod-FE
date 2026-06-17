@@ -53,6 +53,7 @@ export interface User {
   city: string | null;
   region: string | null;
   country: string | null;
+  emailVerified: boolean;
   createdAt: string;
 }
 

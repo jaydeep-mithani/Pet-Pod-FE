@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components";
@@ -11,12 +11,40 @@ import { usersService } from "@/lib/services/users.service";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES } from "@/lib/routes";
 import { firstName } from "@/utils";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
+
+// Standalone page wash — these gradient stops aren't covered by the global
+// theme layers, so it branches (mirrors verify-email): calm gets a stone/teal
+// morning wash, bold a near-black stage with a faint neon radial up top.
+const PAGE_BG: Record<MotionVibe, string> = {
+  playful: "bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100",
+  calm: "bg-gradient-to-br from-stone-50 via-teal-50 to-stone-100",
+  bold: "bg-[#0a0a12] bg-[radial-gradient(70%_55%_at_50%_0%,rgba(217,70,239,0.14),transparent_70%)]",
+};
+
+// Per-vibe eyebrow above the greeting: playful keeps the candy pink kicker,
+// calm a quiet stone label, bold a mono cyan section marker.
+const EYEBROW: Record<MotionVibe, string> = {
+  playful: "text-pink-600",
+  calm: "text-stone-500",
+  bold: "font-mono text-cyan-300",
+};
 
 export default function WelcomePage() {
   const status = useRequireAuth();
   const { user, refresh } = useAuth();
+  const { vibe } = useMotionVibe();
   const router = useRouter();
   const [continuing, setContinuing] = useState(false);
+
+  // /welcome is the avatar-onboarding step; verification gates it. If a user
+  // lands here unverified (e.g. via stale link or back button), push them
+  // back to /verify-email.
+  useEffect(() => {
+    if (status === "authed" && user && !user.emailVerified) {
+      router.replace(ROUTES.verifyEmail);
+    }
+  }, [status, user, router]);
 
   const handleUploaded = async (url: string) => {
     try {
@@ -47,18 +75,24 @@ export default function WelcomePage() {
 
   if (status !== "authed" || !user) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100">
+      <main
+        className={`flex min-h-screen items-center justify-center ${PAGE_BG[vibe]}`}
+      >
         <p className="text-sm text-gray-600">Loading…</p>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 via-amber-50 to-rose-100 px-4 py-12">
+    <main
+      className={`flex min-h-screen items-center justify-center px-4 py-12 ${PAGE_BG[vibe]}`}
+    >
       <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl sm:p-10">
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-wider text-pink-600">
-            Welcome to Pet Pod
+          <p
+            className={`text-xs font-semibold uppercase tracking-wider ${EYEBROW[vibe]}`}
+          >
+            {vibe === "bold" ? "// welcome to pet pod" : "Welcome to Pet Pod"}
           </p>
           <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">
             Nice to meet you, {firstName(user)}.

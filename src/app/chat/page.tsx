@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { useChat } from "@/lib/chat/ChatProvider";
 import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { conversationsService } from "@/lib/services/conversations.service";
+import { useMotionVibe } from "@/lib/motion";
 import { ROUTES } from "@/lib/routes";
 import { cn, formatRelativeTime, petShortName } from "@/utils";
 import type { ConversationListItem } from "@/types";
@@ -17,6 +18,7 @@ import type { ConversationListItem } from "@/types";
 export default function ChatListPage() {
   const status = useRequireAuth();
   const { user } = useAuth();
+  const { vibe } = useMotionVibe();
   const { unreadByConv, onlineUserIds, onMessage } = useChat();
   const [conversations, setConversations] = useState<
     ConversationListItem[] | null
@@ -55,6 +57,11 @@ export default function ChatListPage() {
     <main className="min-h-screen bg-white pt-28 sm:pt-32">
       <section className="bg-gradient-to-b from-rose-50/60 to-white pb-8">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          {vibe === "bold" && (
+            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-cyan-300">
+              {"// inbox"}
+            </p>
+          )}
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Messages
           </h1>
@@ -71,7 +78,16 @@ export default function ChatListPage() {
           ) : conversations.length === 0 ? (
             <EmptyState />
           ) : (
-            <ul className="divide-y divide-gray-100 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+            <ul
+              className={cn(
+                "divide-y overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm",
+                vibe === "bold"
+                  ? "divide-white/5"
+                  : vibe === "calm"
+                    ? "divide-stone-200"
+                    : "divide-gray-100",
+              )}
+            >
               {conversations.map((conv) => (
                 <ConversationRow
                   key={conv.id}
@@ -105,6 +121,7 @@ const ConversationRow: React.FC<ConversationRowProps> = ({
   onlineUserIds,
 }) => {
   const router = useRouter();
+  const { vibe } = useMotionVibe();
   const otherUser = conv.ownerId === currentUserId ? conv.adopter : conv.owner;
   const cover = conv.pet.photos[0]?.url;
   const lastMsg = conv.messages[0];
@@ -116,6 +133,9 @@ const ConversationRow: React.FC<ConversationRowProps> = ({
     : formatRelativeTime(conv.updatedAt);
   const otherOnline = onlineUserIds.has(otherUser.id);
   const hasUnread = unreadCount > 0;
+  // Opacity-suffixed pink washes aren't theme-remapped; calm/bold use the
+  // plain bg-pink-50 utility, which globals.css retints per vibe.
+  const cutoutRing = vibe === "bold" ? "ring-[#13131e]" : "ring-white";
 
   return (
     <li>
@@ -123,8 +143,9 @@ const ConversationRow: React.FC<ConversationRowProps> = ({
         type="button"
         onClick={() => router.push(`${ROUTES.chat}/${conv.id}`)}
         className={cn(
-          "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-pink-50/40",
-          hasUnread && "bg-pink-50/30",
+          "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors",
+          vibe === "playful" ? "hover:bg-pink-50/40" : "hover:bg-pink-50",
+          hasUnread && (vibe === "playful" ? "bg-pink-50/30" : "bg-pink-50"),
         )}
       >
         <div className="relative h-14 w-14 shrink-0">

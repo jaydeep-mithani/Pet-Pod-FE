@@ -1,11 +1,54 @@
+"use client";
+
 import { Check, HandHeart, ShieldCheck } from "lucide-react";
 import ScrollReveal from "../ui/ScrollReveal";
 import SectionHeading from "../ui/SectionHeading";
 import { WHY_NO_MONEY_REASONS } from "@/constants";
+import { useMotionVibe } from "@/lib/motion";
 
 const REASON_ICONS = [HandHeart, Check, ShieldCheck];
 
 const WhyNoMoneySection: React.FC = () => {
+  const { vibe } = useMotionVibe();
+
+  // Calm: light paper editorial — warm stone background, ink text, reasons
+  // as left-ruled rows instead of dark glass cards.
+  if (vibe === "calm") {
+    return (
+      <section className="relative overflow-hidden bg-[#f7f6f3] py-24 sm:py-28">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <SectionHeading
+              eyebrow="Why no money changes hands"
+              title={
+                <span>
+                  Pets aren&apos;t products.
+                  <span className="block text-stone-500">
+                    We built it that way on purpose.
+                  </span>
+                </span>
+              }
+              subtitle="Every other rehoming option turns animals into transactions. We think that's the root of the problem."
+            />
+          </ScrollReveal>
+
+          <div className="mt-14 space-y-10">
+            {WHY_NO_MONEY_REASONS.map((reason, i) => (
+              <ScrollReveal key={reason.title} delay={i * 0.08}>
+                <div className="border-l-2 border-teal-700/40 pl-6 sm:pl-8">
+                  <h3 className="text-xl text-gray-900">{reason.title}</h3>
+                  <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-600">
+                    {reason.description}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative overflow-hidden bg-gray-950 py-20 text-white sm:py-24">
       <div

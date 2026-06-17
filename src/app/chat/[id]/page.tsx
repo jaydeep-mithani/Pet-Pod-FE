@@ -13,8 +13,42 @@ import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { conversationsService } from "@/lib/services/conversations.service";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES } from "@/lib/routes";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
+import { FIELD_CHROME } from "@/components/ui/Input";
 import { cn, firstName, formatRelativeTime, petShortName } from "@/utils";
 import type { Conversation, Message } from "@/types";
+
+// Thread wash behind the bubbles. The playful rose tint isn't a remapped
+// stop, so it branches: calm gets a flat warm sand, bold the near-black stage.
+const THREAD_BG: Record<MotionVibe, string> = {
+  playful: "bg-gradient-to-b from-rose-50/30 to-white",
+  calm: "bg-[#f7f6f3]",
+  bold: "bg-[#0a0a12]",
+};
+
+// hover:bg-gray-100 flashes light-on-dark in bold, so neutral row/button
+// hovers branch per vibe.
+const NEUTRAL_HOVER: Record<MotionVibe, string> = {
+  playful: "hover:bg-gray-100 hover:text-gray-900",
+  calm: "hover:bg-stone-100 hover:text-gray-900",
+  bold: "hover:bg-white/10 hover:text-white",
+};
+
+// Other-party bubble + composer/header chrome. Calm flattens to hairline
+// rules; bold goes dark with a neon hairline.
+const OTHER_BUBBLE: Record<MotionVibe, string> = {
+  playful: "bg-white text-gray-900 shadow-sm ring-1 ring-gray-200",
+  calm: "bg-white text-gray-900 ring-1 ring-stone-200",
+  bold: "bg-[#13131e] text-gray-100 ring-1 ring-fuchsia-500/30",
+};
+
+// Own bubble. Brand gradient auto-remaps; bold adds a thin neon edge + glow.
+const OWN_BUBBLE: Record<MotionVibe, string> = {
+  playful:
+    "rounded-br-md bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-sm",
+  calm: "rounded-br-md bg-gradient-to-br from-pink-500 to-purple-600 text-white",
+  bold: "rounded-br-md bg-gradient-to-br from-pink-500 to-purple-600 text-white border border-fuchsia-500/40 shadow-[0_0_18px_-4px_rgba(217,70,239,0.5)]",
+};
 
 // Re-emit typing:start at most this often while the user is actively typing,
 // so a long pause mid-message doesn't drop the indicator on the other side.
@@ -25,6 +59,7 @@ const TYPING_STOP_AFTER_MS = 5000;
 export default function ConversationDetailPage() {
   const status = useRequireAuth();
   const { user } = useAuth();
+  const { vibe } = useMotionVibe();
   const {
     setActiveConversation,
     markRead,
@@ -269,7 +304,10 @@ export default function ConversationDetailPage() {
             type="button"
             onClick={() => router.push(ROUTES.chat)}
             aria-label="Back to messages"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+            className={cn(
+              "inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-600 transition-colors",
+              NEUTRAL_HOVER[vibe],
+            )}
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
@@ -309,6 +347,11 @@ export default function ConversationDetailPage() {
             </Link>
           </div>
           <div className="min-w-0 flex-1">
+            {vibe === "bold" && (
+              <p className="font-mono text-[10px] uppercase tracking-wider text-cyan-300">
+                {"// chat"}
+              </p>
+            )}
             <p className="truncate text-sm font-semibold text-gray-900">
               {otherUser ? (
                 <Link
@@ -338,7 +381,7 @@ export default function ConversationDetailPage() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto bg-gradient-to-b from-rose-50/30 to-white">
+      <div className={cn("flex-1 overflow-y-auto", THREAD_BG[vibe])}>
         <div className="mx-auto flex max-w-3xl flex-col gap-2 px-4 py-6 sm:px-6">
           {nextBefore && (
             <div className="flex justify-center">
@@ -410,10 +453,10 @@ export default function ConversationDetailPage() {
                     ))}
                   <div
                     className={cn(
-                      "max-w-[75%] rounded-2xl px-3.5 py-2 text-sm shadow-sm",
+                      "max-w-[75%] rounded-2xl px-3.5 py-2 text-sm",
                       mine
-                        ? "rounded-br-md bg-gradient-to-br from-pink-500 to-purple-600 text-white"
-                        : "rounded-bl-md bg-white text-gray-900 ring-1 ring-gray-200",
+                        ? OWN_BUBBLE[vibe]
+                        : cn("rounded-bl-md", OTHER_BUBBLE[vibe]),
                     )}
                   >
                     <p className="whitespace-pre-wrap break-words">
@@ -440,8 +483,13 @@ export default function ConversationDetailPage() {
                 avatarUrl={otherUser.avatarUrl}
                 size="sm"
               />
-              <div className="rounded-2xl rounded-bl-md bg-white px-4 py-2.5 shadow-sm ring-1 ring-gray-200">
-                <TypingDots />
+              <div
+                className={cn(
+                  "rounded-2xl rounded-bl-md px-4 py-2.5",
+                  OTHER_BUBBLE[vibe],
+                )}
+              >
+                <TypingDots vibe={vibe} />
               </div>
             </div>
           )}
@@ -469,7 +517,11 @@ export default function ConversationDetailPage() {
             rows={1}
             maxLength={2000}
             disabled={sending}
-            className="flex-1 resize-none rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200"
+            className={cn(
+              "flex-1 resize-none rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none",
+              FIELD_CHROME[vibe].focus,
+              FIELD_CHROME[vibe].hover,
+            )}
           />
           <Button
             type="submit"
@@ -487,12 +539,21 @@ export default function ConversationDetailPage() {
   );
 }
 
-const TypingDots: React.FC = () => (
+const TYPING_DOT: Record<MotionVibe, string> = {
+  playful: "bg-gray-400",
+  calm: "bg-stone-400",
+  bold: "bg-cyan-300",
+};
+
+const TypingDots: React.FC<{ vibe: MotionVibe }> = ({ vibe }) => (
   <div className="flex items-center gap-1">
     {[0, 1, 2].map((i) => (
       <span
         key={i}
-        className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400"
+        className={cn(
+          "h-1.5 w-1.5 animate-bounce rounded-full",
+          TYPING_DOT[vibe],
+        )}
         style={{ animationDelay: `${i * 120}ms` }}
       />
     ))}

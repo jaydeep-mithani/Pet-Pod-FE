@@ -13,8 +13,11 @@ const Card: React.FC<CardProps> = ({
   hover = false,
   padding = "md",
 }) => {
-  const baseClasses =
-    "bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700";
+  // Only auto-remapping utilities here so the generic Card inherits every
+  // vibe for free (bold flips bg-white dark + border-gray-200 neon via the
+  // global theme layer; calm warms them). No `dark:` variants — the app
+  // keys themes off html.vibe-*, not a `.dark` class, so they'd be dead code.
+  const baseClasses = "bg-white rounded-2xl shadow-lg border border-gray-200";
 
   const paddingClasses = {
     sm: "p-4",
