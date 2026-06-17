@@ -31,10 +31,16 @@ export const NAVBAR_HIDDEN_ROUTES = [
 ] as const;
 
 /**
- * Resolve where an authenticated user should land based on their onboarding
- * state. Order matters: verification gates everything (it's the trust
- * signal); avatar onboarding follows; then the requested destination (or
- * home if none).
+ * Resolve where an authenticated user should land.
+ *
+ * Email verification gates everything (the trust signal) and applies on every
+ * sign-in. The avatar-onboarding `/welcome` step, by contrast, is a FIRST-RUN
+ * step only: it's shown once at the end of the signup → verify chain, never on
+ * a returning login. Callers opt in with `firstRun`; login leaves it false so
+ * a user who skipped their photo isn't nagged to /welcome on every sign-in.
+ *
+ * `firstRun` is carried across the verify-email hop via a `?welcome=1` query
+ * flag, since the in-memory intent wouldn't survive the page navigation.
  */
 interface PostAuthUser {
   emailVerified: boolean;
@@ -44,8 +50,11 @@ interface PostAuthUser {
 export function postAuthRedirect(
   user: PostAuthUser,
   fallback: string = ROUTES.home,
+  firstRun = false,
 ): string {
-  if (!user.emailVerified) return ROUTES.verifyEmail;
-  if (!user.avatarUrl) return ROUTES.welcome;
+  if (!user.emailVerified) {
+    return firstRun ? `${ROUTES.verifyEmail}?welcome=1` : ROUTES.verifyEmail;
+  }
+  if (firstRun && !user.avatarUrl) return ROUTES.welcome;
   return fallback;
 }

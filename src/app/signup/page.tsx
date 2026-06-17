@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -33,11 +33,16 @@ export default function SignupPage() {
   const { signup, status, user } = useAuth();
   const { vibe } = useMotionVibe();
 
-  // Once authed, route through the verify → welcome → home chain. Centralised
-  // in postAuthRedirect so signup / login / welcome all agree.
+  // Distinguishes a genuine fresh signup (gets the first-run /welcome step)
+  // from an already-authed visitor who merely navigated to /signup (does not).
+  const freshSignup = useRef(false);
+
+  // Once authed, route through the chain. firstRun is true only for a real
+  // signup, so the avatar-onboarding /welcome step shows once here and never
+  // on a returning login.
   useEffect(() => {
     if (status === "authed" && user) {
-      router.replace(postAuthRedirect(user));
+      router.replace(postAuthRedirect(user, ROUTES.home, freshSignup.current));
     }
   }, [status, user, router]);
 
@@ -48,6 +53,7 @@ export default function SignupPage() {
 
   const onSubmit = async (values: SignupValues) => {
     try {
+      freshSignup.current = true;
       const created = await signup({
         name: values.name,
         email: values.email,
@@ -99,6 +105,10 @@ export default function SignupPage() {
         <span className={`h-px flex-1 ${DIVIDER_RULE[vibe]}`} />
       </div>
 
+      {/* onSubmit reads freshSignup.current only when the form is submitted
+          (an event handler), never during render — the compiler rule can't
+          see through handleSubmit and flags a false positive. */}
+      {/* eslint-disable-next-line react-hooks/refs */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Your name"

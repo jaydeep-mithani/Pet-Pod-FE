@@ -58,6 +58,9 @@ function VerifyEmailContent() {
   const params = useSearchParams();
 
   const nextPath = params.get("next");
+  // Set by the signup flow (postAuthRedirect firstRun). Keeps the one-time
+  // avatar-onboarding /welcome step alive across the verify hop.
+  const firstRun = params.get("welcome") === "1";
 
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -117,9 +120,9 @@ function VerifyEmailContent() {
   useEffect(() => {
     if (status !== "authed" || !user) return;
     if (user.emailVerified) {
-      router.replace(postAuthRedirect(user, nextPath ?? ROUTES.home));
+      router.replace(postAuthRedirect(user, nextPath ?? ROUTES.home, firstRun));
     }
-  }, [status, user, router, nextPath]);
+  }, [status, user, router, nextPath, firstRun]);
 
   const handleCodeChange = (raw: string) => {
     const digits = raw.replace(/\D/g, "").slice(0, CODE_LENGTH);
