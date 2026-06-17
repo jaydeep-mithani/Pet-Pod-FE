@@ -195,7 +195,11 @@ html.vibe-calm .ring-rose-100,
 html.vibe-calm .ring-pink-200 {
   --tw-ring-color: #ccfbf1;
 }
-html.vibe-calm .hover\:ring-pink-300\/70:hover {
+html.vibe-calm .ring-pink-500 {
+  --tw-ring-color: #0f766e;
+}
+html.vibe-calm .hover\:ring-pink-300\/70:hover,
+html.vibe-calm .hover\:ring-pink-300:hover {
   --tw-ring-color: rgba(94, 234, 212, 0.7);
 }
 html.vibe-calm .border-pink-500 {
@@ -245,6 +249,14 @@ html.vibe-calm .from-rose-50\/60 {
 }
 html.vibe-calm .to-rose-50\/40 {
   --tw-gradient-to: rgba(250, 250, 249, 0.4);
+}
+
+/* Standalone candy washes (e.g. no-photo fallback) -> warm stone */
+html.vibe-calm .via-amber-50 {
+  --tw-gradient-via: #f5f5f4;
+}
+html.vibe-calm .to-rose-100 {
+  --tw-gradient-to: #e7e5e4;
 }
 
 /* Long-tail remaps: form focus states, chips, hairlines */
@@ -323,6 +335,17 @@ html.vibe-bold .bg-gray-100 {
 html.vibe-bold .bg-gray-950 {
   background-color: #070710;
 }
+/* Skeleton shimmer gradient stops -> dark, so loading blocks don't flash
+   blinding light on the dark stage. */
+html.vibe-bold .from-gray-100 {
+  --tw-gradient-from: #16161f;
+}
+html.vibe-bold .via-gray-200\/80 {
+  --tw-gradient-via: rgba(40, 40, 53, 0.8);
+}
+html.vibe-bold .to-gray-100 {
+  --tw-gradient-to: #16161f;
+}
 html.vibe-bold .bg-rose-50,
 html.vibe-bold .bg-pink-50 {
   background-color: #1a0f1f;
@@ -332,6 +355,19 @@ html.vibe-bold .from-white {
 }
 html.vibe-bold .to-white {
   --tw-gradient-to: #13131e;
+}
+/* Standalone candy washes (no-photo fallback etc.) -> dark stage */
+html.vibe-bold .from-rose-50 {
+  --tw-gradient-from: #13131e;
+}
+html.vibe-bold .via-amber-50 {
+  --tw-gradient-via: #16121f;
+}
+html.vibe-bold .to-rose-100 {
+  --tw-gradient-to: #1a0f1f;
+}
+html.vibe-bold .text-pink-400 {
+  color: #67e8f9;
 }
 html.vibe-bold .from-rose-50\/60 {
   --tw-gradient-from: rgba(26, 15, 31, 0.6);
@@ -370,7 +406,11 @@ html.vibe-bold .ring-gray-200\/70 {
 html.vibe-bold .ring-rose-100 {
   --tw-ring-color: rgba(217, 70, 239, 0.3);
 }
-html.vibe-bold .hover\:ring-pink-300\/70:hover {
+html.vibe-bold .ring-pink-500 {
+  --tw-ring-color: #d946ef;
+}
+html.vibe-bold .hover\:ring-pink-300\/70:hover,
+html.vibe-bold .hover\:ring-pink-300:hover {
   --tw-ring-color: rgba(34, 211, 238, 0.7);
 }
 
