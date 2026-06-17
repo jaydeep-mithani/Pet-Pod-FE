@@ -24,6 +24,7 @@ import { useChat } from "@/lib/chat/ChatProvider";
 import { cn } from "@/utils";
 import { NAVBAR_HIDDEN_ROUTES, ROUTES } from "@/lib/routes";
 import { APP_NAME } from "@/constants";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 
 interface NavItem {
   name: string;
@@ -46,9 +47,37 @@ interface FloatingNavbarProps {
   className?: string;
 }
 
+// Scrolled-state surface per vibe. `bg-gray-950/90` carries an opacity suffix
+// the global bold layer doesn't remap, so the scrolled bar would stay a stark
+// near-black slab in every vibe. Playful keeps that (its current look); calm
+// swaps to a light frosted editorial bar with a hairline so it doesn't fight
+// the paper aesthetic; bold keeps the dark slab but adds a neon underline glow.
+const SCROLLED_SURFACE: Record<MotionVibe, string> = {
+  playful: "bg-gray-950/90 top-0 left-0 right-0 py-3 backdrop-blur-md",
+  calm: "bg-white/90 border-b border-stone-200 top-0 left-0 right-0 py-3 backdrop-blur-md",
+  bold: "bg-gray-950/90 border-b border-fuchsia-500/40 shadow-[0_6px_24px_-8px_rgba(217,70,239,0.45)] top-0 left-0 right-0 py-3 backdrop-blur-md",
+};
+
+// Whether the scrolled bar reads as light (dark ink) for that vibe — only calm
+// flips to a light surface, so its links use the light-state ink.
+const SCROLLED_IS_LIGHT: Record<MotionVibe, boolean> = {
+  playful: false,
+  calm: true,
+  bold: false,
+};
+
+// Mobile logout leans destructive-red, which isn't remapped and reads harsh on
+// bold's dark mobile card — cool it to a fuchsia hover there.
+const MOBILE_LOGOUT: Record<MotionVibe, string> = {
+  playful: "text-gray-700 bg-red-100 hover:bg-red-200 hover:text-red-700",
+  calm: "text-gray-700 bg-red-100 hover:bg-red-200 hover:text-red-700",
+  bold: "text-gray-300 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 hover:text-fuchsia-200",
+};
+
 const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
   const pathname = usePathname();
   const isScrolled = useScrolled(50);
+  const { vibe } = useMotionVibe();
   const { status, user, logout } = useAuth();
   const { totalUnread } = useChat();
   const router = useRouter();
@@ -71,11 +100,15 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
       ? [...PUBLIC_NAV_ITEMS, ...AUTHED_EXTRA_NAV_ITEMS]
       : PUBLIC_NAV_ITEMS;
 
+  // The floating (top) bar is always a light surface; only the scrolled bar's
+  // lightness varies by vibe (calm flips light). `darkChrome` drives the ink.
+  const darkChrome = isScrolled && !SCROLLED_IS_LIGHT[vibe];
+
   const navAppearance = isScrolled
-    ? "bg-gray-950/90 text-white top-0 left-0 right-0 py-3 backdrop-blur-md"
+    ? cn(SCROLLED_SURFACE[vibe], darkChrome ? "text-white" : "text-gray-900")
     : "bg-white/90 text-gray-900 shadow-xl rounded-2xl top-4 left-4 right-4 backdrop-blur-lg";
 
-  const linkTextClasses = isScrolled
+  const linkTextClasses = darkChrome
     ? "text-white/90 hover:text-pink-200 hover:bg-white/10"
     : "text-gray-700 hover:text-pink-600 hover:bg-pink-50";
 
@@ -98,7 +131,7 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
             <span
               className={cn(
                 "text-xl font-bold transition-colors",
-                isScrolled ? "text-white" : "text-gray-900",
+                darkChrome ? "text-white" : "text-gray-900",
               )}
             >
               {APP_NAME}
@@ -132,21 +165,27 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
               <div
                 className={cn(
                   "h-8 w-20 animate-pulse rounded-full",
-                  isScrolled ? "bg-white/10" : "bg-gray-100",
+                  darkChrome ? "bg-white/10" : "bg-gray-100",
                 )}
                 aria-hidden
               />
             ) : status === "authed" && user ? (
-              <UserMenu variant={isScrolled ? "dark" : "light"} />
+              <UserMenu variant={darkChrome ? "dark" : "light"} />
             ) : (
               <>
                 <Link href={ROUTES.login}>
-                  <Button variant={isScrolled ? "ghost" : "secondary"} size="sm">
+                  <Button
+                    variant={darkChrome ? "ghost" : "secondary"}
+                    size="sm"
+                  >
                     Log in
                   </Button>
                 </Link>
                 <Link href={ROUTES.signup}>
-                  <Button variant={isScrolled ? "floating" : "primary"} size="sm">
+                  <Button
+                    variant={darkChrome ? "floating" : "primary"}
+                    size="sm"
+                  >
                     Sign up
                   </Button>
                 </Link>
@@ -232,7 +271,10 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
                     closeMobile();
                     void handleMobileLogout();
                   }}
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-md py-2 text-sm font-medium text-gray-700 transition-colors bg-red-100 hover:bg-red-200 hover:text-red-700"
+                  className={cn(
+                    "mt-3 flex w-full items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-colors",
+                    MOBILE_LOGOUT[vibe],
+                  )}
                 >
                   <LogOut className="h-4 w-4" aria-hidden />
                   Log out
@@ -240,18 +282,26 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
               </div>
             ) : status === "guest" ? (
               <>
-                <Link href={ROUTES.signup} onClick={closeMobile} className="block">
+                <Link
+                  href={ROUTES.signup}
+                  onClick={closeMobile}
+                  className="block"
+                >
                   <Button
-                    variant={isScrolled ? "floating" : "primary"}
+                    variant={darkChrome ? "floating" : "primary"}
                     size="md"
                     className="w-full"
                   >
                     Sign up
                   </Button>
                 </Link>
-                <Link href={ROUTES.login} onClick={closeMobile} className="block">
+                <Link
+                  href={ROUTES.login}
+                  onClick={closeMobile}
+                  className="block"
+                >
                   <Button
-                    variant={isScrolled ? "ghost" : "secondary"}
+                    variant={darkChrome ? "ghost" : "secondary"}
                     size="md"
                     className="w-full"
                   >

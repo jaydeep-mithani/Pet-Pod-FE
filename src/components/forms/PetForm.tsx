@@ -275,12 +275,7 @@ const PetForm: React.FC<PetFormProps> = ({
             {cancelling ? "Cancelling…" : "Cancel"}
           </Button>
         )}
-        <Button
-          type="submit"
-          variant="primary"
-          size="md"
-          disabled={busy}
-        >
+        <Button type="submit" variant="primary" size="md" disabled={busy}>
           {submitting ? "Saving…" : labelForSubmit}
         </Button>
       </div>

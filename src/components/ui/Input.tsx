@@ -1,11 +1,48 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import type { LucideIcon } from "lucide-react";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 import { cn } from "@/utils";
 
-interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+/**
+ * Per-vibe focus/hover chrome for field wrappers. The globals.css theme
+ * layers only remap `focus:`-variant utilities, not `focus-within:`, so the
+ * wrapper-based field primitives (Input/Select/Textarea) branch here instead.
+ * Complete static class strings so Tailwind can see them.
+ */
+export const FIELD_CHROME: Record<
+  MotionVibe,
+  { focus: string; hover: string }
+> = {
+  playful: {
+    focus:
+      "focus-within:border-transparent focus-within:ring-2 focus-within:ring-pink-500",
+    hover: "hover:border-pink-200",
+  },
+  calm: {
+    focus:
+      "focus-within:border-transparent focus-within:ring-2 focus-within:ring-teal-700",
+    hover: "hover:border-teal-200",
+  },
+  bold: {
+    focus:
+      "focus-within:border-transparent focus-within:ring-2 focus-within:ring-fuchsia-500",
+    hover: "hover:border-fuchsia-500/40",
+  },
+};
+
+interface InputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   label?: string;
   error?: string;
   hint?: string;
@@ -34,6 +71,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref,
 ) {
+  const { vibe } = useMotionVibe();
   const reactId = (rest as { id?: string }).id ?? undefined;
   const generatedId = useFallbackId(id ?? reactId);
   const inputId = id ?? generatedId;
@@ -93,10 +131,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <div
         className={cn(
           "flex items-center gap-2 rounded-xl border-2 bg-white px-3 transition-all",
-          "focus-within:border-transparent focus-within:ring-2 focus-within:ring-pink-500",
+          FIELD_CHROME[vibe].focus,
           error
             ? "border-red-400"
-            : "border-gray-200 hover:border-pink-200",
+            : cn("border-gray-200", FIELD_CHROME[vibe].hover),
           rest.disabled && "cursor-not-allowed opacity-60",
         )}
       >

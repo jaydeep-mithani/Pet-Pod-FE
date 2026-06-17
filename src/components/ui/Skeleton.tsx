@@ -7,7 +7,7 @@ const Skeleton: React.FC<SkeletonProps> = ({ className, ...rest }) => {
     <div
       aria-hidden
       className={cn(
-        "animate-pulse rounded-md bg-gradient-to-r from-gray-100 via-gray-200/80 to-gray-100",
+        "shimmer animate-pulse rounded-md bg-gradient-to-r from-gray-100 via-gray-200/80 to-gray-100",
         className,
       )}
       {...rest}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -9,27 +9,42 @@ import { Mail, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input } from "@/components";
 import PasswordInput from "@/components/ui/PasswordInput";
+import GoogleSignInButton from "@/components/ui/GoogleSignInButton";
 import AuthLayout from "@/components/layouts/AuthLayout";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, postAuthRedirect } from "@/lib/routes";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ApiError } from "@/lib/api/errors";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
 import { signupSchema, type SignupValues } from "@/lib/validation/auth";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=1600&q=80";
 
+// bg-gray-200 hairlines aren't remapped (they'd stay light on bold's dark
+// card), so the "or use email" divider rule branches per vibe.
+const DIVIDER_RULE: Record<MotionVibe, string> = {
+  playful: "bg-gray-200",
+  calm: "bg-stone-200",
+  bold: "bg-fuchsia-500/25",
+};
+
 export default function SignupPage() {
   const router = useRouter();
   const { signup, status, user } = useAuth();
+  const { vibe } = useMotionVibe();
 
-  // Already-authed users hitting /signup go home; freshly-signed-up users
-  // (no avatar yet) get sent to /welcome to set one. The avatarUrl doubles
-  // as a "have they been onboarded?" signal without a separate column.
+  // Distinguishes a genuine fresh signup (gets the first-run /welcome step)
+  // from an already-authed visitor who merely navigated to /signup (does not).
+  const freshSignup = useRef(false);
+
+  // Once authed, route through the chain. firstRun is true only for a real
+  // signup, so the avatar-onboarding /welcome step shows once here and never
+  // on a returning login.
   useEffect(() => {
-    if (status === "authed") {
-      router.replace(user?.avatarUrl ? ROUTES.home : ROUTES.welcome);
+    if (status === "authed" && user) {
+      router.replace(postAuthRedirect(user, ROUTES.home, freshSignup.current));
     }
-  }, [status, user?.avatarUrl, router]);
+  }, [status, user, router]);
 
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
@@ -38,13 +53,15 @@ export default function SignupPage() {
 
   const onSubmit = async (values: SignupValues) => {
     try {
+      freshSignup.current = true;
       const created = await signup({
         name: values.name,
         email: values.email,
         password: values.password,
       });
       toast.success(`Welcome, ${created.name.split(" ")[0]}.`);
-      // The auto-redirect useEffect will route to /welcome (no avatar yet).
+      // The auto-redirect useEffect will route to /verify-email (we just
+      // emailed them a code).
     } catch (err) {
       if (err instanceof ApiError) {
         toast.error(err.message || "Signup failed");
@@ -80,6 +97,18 @@ export default function SignupPage() {
         </p>
       }
     >
+      <GoogleSignInButton label="Sign up with Google" />
+
+      <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-wider text-gray-400">
+        <span className={`h-px flex-1 ${DIVIDER_RULE[vibe]}`} />
+        <span>{vibe === "bold" ? "// or use email" : "or use email"}</span>
+        <span className={`h-px flex-1 ${DIVIDER_RULE[vibe]}`} />
+      </div>
+
+      {/* onSubmit reads freshSignup.current only when the form is submitted
+          (an event handler), never during render — the compiler rule can't
+          see through handleSubmit and flags a false positive. */}
+      {/* eslint-disable-next-line react-hooks/refs */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Your name"

@@ -9,23 +9,46 @@ import {
   PetCard,
   PetCardSkeleton,
   UserAvatar,
+  VelocityTilt,
 } from "@/components";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import {
-  usersService,
-  type PublicUser,
-} from "@/lib/services/users.service";
+import { usersService, type PublicUser } from "@/lib/services/users.service";
 import { petsService } from "@/lib/services";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES } from "@/lib/routes";
-import { formatLocation } from "@/utils";
+import { useMotionVibe, type MotionVibe } from "@/lib/motion";
+import { cn, formatLocation } from "@/utils";
 import type { PetListItem } from "@/types";
+
+// Avatar ring: playful keeps the white halo, calm a hairline, bold a neon
+// glow ring on the dark stage.
+const AVATAR_RING: Record<MotionVibe, string> = {
+  playful: "ring-4 ring-white",
+  calm: "ring-1 ring-stone-200",
+  bold: "ring-2 ring-fuchsia-500/60 shadow-[0_0_28px_-6px_rgba(217,70,239,0.6)]",
+};
+
+// Member-since / location chips: plain inline text in playful and calm,
+// dark neon-trimmed pills in bold so they stay legible over the night wash.
+const META_CHIP: Record<MotionVibe, string> = {
+  playful: "inline-flex items-center gap-1",
+  calm: "inline-flex items-center gap-1 text-stone-500",
+  bold: "inline-flex items-center gap-1.5 rounded-full border border-fuchsia-500/30 bg-gray-950/60 px-3 py-1 font-mono text-xs uppercase tracking-wider text-gray-300",
+};
+
+// Listings header underline, matching the my-listings page.
+const LISTINGS_RULE: Record<MotionVibe, string> = {
+  playful: "",
+  calm: "border-b border-stone-200 pb-4",
+  bold: "border-b border-fuchsia-500/30 pb-4",
+};
 
 export default function PublicProfilePage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
   const router = useRouter();
   const { user: currentUser } = useAuth();
+  const { vibe } = useMotionVibe();
 
   const [profile, setProfile] = useState<PublicUser | null>(null);
   const [pets, setPets] = useState<PetListItem[] | null>(null);
@@ -102,20 +125,25 @@ export default function PublicProfilePage() {
               name={profile.name}
               avatarUrl={profile.avatarUrl}
               size="lg"
-              className="!h-24 !w-24 text-2xl ring-4 ring-white"
+              className={cn("!h-24 !w-24 text-2xl", AVATAR_RING[vibe])}
             />
             <div className="min-w-0 flex-1 text-center sm:text-left">
+              {vibe === "bold" && (
+                <span className="mb-1 block font-mono text-xs uppercase tracking-[0.35em] text-cyan-300">
+                  {"// profile"}
+                </span>
+              )}
               <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 {profile.name}
               </h1>
               <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500 sm:justify-start">
                 {location && (
-                  <span className="inline-flex items-center gap-1">
+                  <span className={META_CHIP[vibe]}>
                     <MapPin className="h-3.5 w-3.5" aria-hidden />
                     {location}
                   </span>
                 )}
-                <span className="inline-flex items-center gap-1">
+                <span className={META_CHIP[vibe]}>
                   <Calendar className="h-3.5 w-3.5" aria-hidden />
                   Member since {joined}
                 </span>

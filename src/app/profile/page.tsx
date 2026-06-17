@@ -12,15 +12,24 @@ import { useRequireAuth } from "@/lib/auth/useRequireAuth";
 import { usersService } from "@/lib/services/users.service";
 import { ApiError } from "@/lib/api/errors";
 import { ROUTES } from "@/lib/routes";
-import {
-  profileSchema,
-  type ProfileValues,
-} from "@/lib/validation/profile";
+import { profileSchema, type ProfileValues } from "@/lib/validation/profile";
+import { celebrate, useMotionVibe, type MotionVibe } from "@/lib/motion";
+import { cn } from "@/utils";
+
+// Per-vibe section chrome: playful keeps the soft card look, calm trades
+// cards for hairline-ruled editorial sections, bold goes neon-bordered
+// panels on the dark stage.
+const SECTION_CLASS: Record<MotionVibe, string> = {
+  playful: "rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8",
+  calm: "border-t border-stone-200 pt-8 sm:pt-10",
+  bold: "rounded-2xl border border-fuchsia-500/40 bg-white p-6 shadow-[0_0_32px_-12px_rgba(217,70,239,0.45)] sm:p-8",
+};
 
 export default function ProfilePage() {
   const status = useRequireAuth();
   const { user, refresh, logout } = useAuth();
   const router = useRouter();
+  const { vibe } = useMotionVibe();
 
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
@@ -70,6 +79,7 @@ export default function ProfilePage() {
       await usersService.updateMe(values);
       await refresh();
       toast.success("Profile saved.");
+      celebrate();
     } catch (err) {
       toast.error(
         err instanceof ApiError
@@ -97,18 +107,24 @@ export default function ProfilePage() {
     <main className="min-h-screen bg-white pt-28 sm:pt-32">
       <section className="bg-gradient-to-b from-rose-50/60 to-white pb-8">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          {vibe === "bold" && (
+            <span className="mb-2 block font-mono text-xs uppercase tracking-[0.35em] text-cyan-300">
+              {"// profile"}
+            </span>
+          )}
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Your profile
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            This is what other Pet Pod members see when you start a conversation.
+            This is what other Pet Pod members see when you start a
+            conversation.
           </p>
         </div>
       </section>
 
       <section className="pb-24">
         <div className="mx-auto max-w-3xl space-y-8 px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className={SECTION_CLASS[vibe]}>
             <div className="flex flex-col items-center gap-2">
               <AvatarUploader
                 initialUrl={user.avatarUrl}
@@ -124,7 +140,7 @@ export default function ProfilePage() {
 
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+            className={cn("space-y-6", SECTION_CLASS[vibe])}
           >
             <Input
               label="Your name"
@@ -181,7 +197,7 @@ export default function ProfilePage() {
             </div>
           </form>
 
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className={SECTION_CLASS[vibe]}>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
               Session
             </h2>

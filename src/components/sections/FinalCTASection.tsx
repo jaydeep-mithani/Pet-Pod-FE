@@ -1,12 +1,18 @@
+"use client";
+
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart, PawPrint } from "lucide-react";
 import Button from "../ui/Button";
 import ScrollReveal from "../ui/ScrollReveal";
 import { ROUTES } from "@/lib/routes";
+import { useAuth } from "@/lib/auth/AuthProvider";
 
 const FinalCTASection: React.FC = () => {
+  const { status } = useAuth();
+  const authed = status === "authed";
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 py-20 sm:py-28">
+    <section className="animate-gradient relative overflow-hidden bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 py-20 sm:py-28">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-30"
@@ -27,25 +33,51 @@ const FinalCTASection: React.FC = () => {
           </p>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <Link href={ROUTES.signup} className="w-full sm:w-auto">
-              <Button
-                variant="floating"
-                size="lg"
-                icon={<Heart className="h-5 w-5" />}
-                className="w-full sm:w-auto sm:min-w-[200px]"
-              >
-                Join Pet Pod
-              </Button>
-            </Link>
-            <Link href={ROUTES.pets} className="w-full sm:w-auto">
-              <Button
-                variant="ghost"
-                size="lg"
-                className="w-full bg-white/10 text-white hover:bg-white/20 sm:w-auto sm:min-w-[200px]"
-              >
-                Browse pets first
-              </Button>
-            </Link>
+            {authed ? (
+              <>
+                <Link href={ROUTES.newListing} className="w-full sm:w-auto">
+                  <Button
+                    variant="floating"
+                    size="lg"
+                    icon={<PawPrint className="h-5 w-5" />}
+                    className="w-full sm:w-auto sm:min-w-[200px]"
+                  >
+                    List a pet
+                  </Button>
+                </Link>
+                <Link href={ROUTES.pets} className="w-full sm:w-auto">
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    className="w-full bg-white/10 text-white hover:bg-white/20 sm:w-auto sm:min-w-[200px]"
+                  >
+                    Browse pets
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href={ROUTES.signup} className="w-full sm:w-auto">
+                  <Button
+                    variant="floating"
+                    size="lg"
+                    icon={<Heart className="h-5 w-5" />}
+                    className="w-full sm:w-auto sm:min-w-[200px]"
+                  >
+                    Join Pet Pod
+                  </Button>
+                </Link>
+                <Link href={ROUTES.pets} className="w-full sm:w-auto">
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    className="w-full bg-white/10 text-white hover:bg-white/20 sm:w-auto sm:min-w-[200px]"
+                  >
+                    Browse pets first
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </ScrollReveal>
       </div>
