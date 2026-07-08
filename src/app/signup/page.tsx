@@ -3,12 +3,13 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input } from "@/components";
 import PasswordInput from "@/components/ui/PasswordInput";
+import PasswordStrength from "@/components/ui/PasswordStrength";
 import GoogleSignInButton from "@/components/ui/GoogleSignInButton";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import { ROUTES, postAuthRedirect } from "@/lib/routes";
@@ -50,6 +51,9 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
     defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
+
+  // Live strength feedback for the password field.
+  const passwordValue = useWatch({ control: form.control, name: "password" });
 
   const onSubmit = async (values: SignupValues) => {
     try {
@@ -138,6 +142,7 @@ export default function SignupPage() {
           {...form.register("password")}
           error={form.formState.errors.password?.message}
         />
+        <PasswordStrength value={passwordValue ?? ""} />
         <PasswordInput
           label="Confirm password"
           autoComplete="new-password"

@@ -47,21 +47,24 @@ interface FloatingNavbarProps {
   className?: string;
 }
 
-// Scrolled-state surface per vibe. `bg-gray-950/90` carries an opacity suffix
-// the global bold layer doesn't remap, so the scrolled bar would stay a stark
-// near-black slab in every vibe. Playful keeps that (its current look); calm
-// swaps to a light frosted editorial bar with a hairline so it doesn't fight
-// the paper aesthetic; bold keeps the dark slab but adds a neon underline glow.
+// Scrolled-state surface per vibe. Each is a frosted bar pinned to the top.
+// Playful and calm both go light so the bar sits cleanly over the soft page
+// palette instead of dropping a stark near-black slab over pastel content;
+// playful keeps a pink hairline + brand accents, calm a stone hairline. Bold
+// stays a dark slab with a neon underline glow to match its electric-night
+// identity. (The per-vibe strings only ever apply under their own vibe, so
+// the brand-hue borders here aren't subject to the other layers' remaps.)
 const SCROLLED_SURFACE: Record<MotionVibe, string> = {
-  playful: "bg-gray-950/90 top-0 left-0 right-0 py-3 backdrop-blur-md",
+  playful:
+    "bg-white/85 border-b border-pink-100 shadow-sm top-0 left-0 right-0 py-3 backdrop-blur-md",
   calm: "bg-white/90 border-b border-stone-200 top-0 left-0 right-0 py-3 backdrop-blur-md",
   bold: "bg-gray-950/90 border-b border-fuchsia-500/40 shadow-[0_6px_24px_-8px_rgba(217,70,239,0.45)] top-0 left-0 right-0 py-3 backdrop-blur-md",
 };
 
-// Whether the scrolled bar reads as light (dark ink) for that vibe — only calm
-// flips to a light surface, so its links use the light-state ink.
+// Whether the scrolled bar reads as light (dark ink) for that vibe. Playful and
+// calm are light surfaces; only bold keeps a dark slab.
 const SCROLLED_IS_LIGHT: Record<MotionVibe, boolean> = {
-  playful: false,
+  playful: true,
   calm: true,
   bold: false,
 };
@@ -218,7 +221,7 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
           isMobileMenuOpen ? "max-h-[520px]" : "max-h-0",
         )}
       >
-        <div className="space-y-1 px-3 pb-4 pt-2">
+        <div className="space-y-1 border-t border-black/5 px-3 pb-4 pt-3">
           {navItems.map((item) => (
             <Link
               key={item.name}

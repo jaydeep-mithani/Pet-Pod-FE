@@ -194,19 +194,17 @@ const AudienceBlock: React.FC<AudienceBlockProps> = ({
     return (
       <div className={className}>
         <ScrollReveal>
-          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-[0_0_16px_rgba(217,70,239,0.6)]">
+          <div className="flex items-center gap-3">
+            <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-[0_0_16px_rgba(217,70,239,0.6)]">
               <Icon className="h-5 w-5" aria-hidden />
             </div>
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-cyan-300">
-                {`// ${meta.eyebrow.toLowerCase()}`}
-              </p>
-              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
-                {meta.subtitle}
-              </p>
-            </div>
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-cyan-300">
+              {`// ${meta.eyebrow.toLowerCase()}`}
+            </p>
           </div>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
+            {meta.subtitle}
+          </p>
         </ScrollReveal>
 
         <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -235,19 +233,17 @@ const AudienceBlock: React.FC<AudienceBlockProps> = ({
   return (
     <div className={className}>
       <ScrollReveal>
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-md">
             <Icon className="h-5 w-5" aria-hidden />
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-pink-600">
-              {meta.eyebrow}
-            </p>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
-              {meta.subtitle}
-            </p>
-          </div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-pink-600">
+            {meta.eyebrow}
+          </p>
         </div>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
+          {meta.subtitle}
+        </p>
       </ScrollReveal>
 
       <div

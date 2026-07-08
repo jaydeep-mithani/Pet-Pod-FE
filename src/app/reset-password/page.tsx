@@ -9,6 +9,7 @@ import { CheckCircle2, KeyRound, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components";
 import PasswordInput from "@/components/ui/PasswordInput";
+import PasswordStrength from "@/components/ui/PasswordStrength";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import { ROUTES } from "@/lib/routes";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -234,6 +235,7 @@ function ResetPasswordContent() {
           {...form.register("password")}
           error={form.formState.errors.password?.message}
         />
+        <PasswordStrength value={watchedPw ?? ""} />
         <PasswordInput
           label="Confirm new password"
           autoComplete="new-password"
