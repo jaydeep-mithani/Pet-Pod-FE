@@ -26,16 +26,19 @@ const STATUS_TINT: Record<MotionVibe, Record<PetStatus, string>> = {
     AVAILABLE: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     PENDING: "bg-amber-50 text-amber-700 ring-amber-200",
     ADOPTED: "bg-gray-100 text-gray-600 ring-gray-200",
+    REMOVED: "bg-gray-100 text-gray-500 ring-gray-200",
   },
   calm: {
     AVAILABLE: "bg-teal-50 text-teal-700 ring-teal-200",
     PENDING: "bg-amber-50 text-amber-800 ring-amber-200",
     ADOPTED: "bg-stone-100 text-stone-600 ring-stone-200",
+    REMOVED: "bg-stone-100 text-stone-500 ring-stone-200",
   },
   bold: {
     AVAILABLE: "bg-gray-950/85 text-cyan-300 ring-cyan-400/40",
     PENDING: "bg-gray-950/85 text-fuchsia-300 ring-fuchsia-400/40",
     ADOPTED: "bg-gray-950/85 text-gray-300 ring-gray-500/40",
+    REMOVED: "bg-gray-950/85 text-gray-500 ring-gray-600/40",
   },
 };
 
@@ -81,7 +84,7 @@ export default function MyListingsPage() {
           >
             <div>
               <Link
-                href={ROUTES.profile}
+                href={ROUTES.settingsProfile}
                 className="text-sm font-medium text-pink-600 hover:text-pink-700"
               >
                 ← Back to profile

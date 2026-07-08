@@ -3,7 +3,13 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, LogOut, PawPrint, UserCircle } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  PawPrint,
+  Settings,
+  UserCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import UserAvatar from "./UserAvatar";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -17,8 +23,9 @@ interface UserMenuProps {
 }
 
 const MENU_ITEMS = [
-  { label: "Your profile", href: ROUTES.profile, icon: UserCircle },
+  { label: "Your profile", href: ROUTES.settingsProfile, icon: UserCircle },
   { label: "My listings", href: ROUTES.myListings, icon: PawPrint },
+  { label: "Settings", href: ROUTES.settings, icon: Settings },
 ];
 
 // The dropdown surface auto-flips dark in bold (bg-white is remapped) but its

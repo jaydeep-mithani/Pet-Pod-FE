@@ -250,12 +250,12 @@ const FloatingNavbar: React.FC<FloatingNavbarProps> = ({ className }) => {
                 <p className="text-xs text-gray-500">{user.email}</p>
                 <div className="mt-3 flex gap-2">
                   <Link
-                    href={ROUTES.profile}
+                    href={ROUTES.settings}
                     onClick={closeMobile}
                     className="flex-1"
                   >
                     <Button variant="secondary" size="sm" className="w-full">
-                      Profile
+                      Settings
                     </Button>
                   </Link>
                   <Link

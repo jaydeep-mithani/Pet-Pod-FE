@@ -35,4 +35,15 @@ export const authService = {
     api.post<{ ok: true }>("/auth/password/forgot", { email }),
   resetPassword: (token: string, password: string) =>
     api.post<{ ok: true }>("/auth/password/reset", { token, password }),
+
+  /**
+   * Change the password (or set a first one — Google-only accounts omit
+   * currentPassword). The BE signs out every other device and rotates this
+   * session's cookies, so the caller stays logged in.
+   */
+  changePassword: (input: { currentPassword?: string; newPassword: string }) =>
+    api.patch<{ ok: true }>("/auth/password", input),
+
+  /** Sign out every other session; returns how many were revoked. */
+  logoutAll: () => api.post<{ revoked: number }>("/auth/logout-all"),
 };
