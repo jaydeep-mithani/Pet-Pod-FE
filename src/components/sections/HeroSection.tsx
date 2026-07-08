@@ -131,6 +131,18 @@ const HeroSection: React.FC = () => {
         aria-hidden
       />
 
+      {/*
+        Editorial (calm) and poster (bold) anchor text to the left, where the
+        vertical overlay is lightest — a left-to-right scrim keeps that column
+        legible over bright photos without darkening the whole image.
+      */}
+      {(editorial || poster) && (
+        <div
+          aria-hidden
+          className="absolute inset-0 z-10 bg-gradient-to-r from-black/65 via-black/20 to-transparent"
+        />
+      )}
+
       {tokens.flourish && (
         <div className="absolute inset-0 z-10 overflow-hidden" aria-hidden>
           {flourishes.map(({ Icon, className, delay }, i) => (
@@ -245,7 +257,7 @@ const HeroSection: React.FC = () => {
 
           <motion.p
             variants={words}
-            className="mt-6 max-w-2xl text-base text-white/85 sm:text-lg md:text-xl"
+            className="mt-6 max-w-2xl text-base text-white [text-shadow:0_1px_14px_rgba(0,0,0,0.55)] sm:text-lg md:text-xl"
           >
             Pet Pod connects people who can&apos;t keep their pets with people
             who can. No marketplace, no fees — just honest conversations and

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isPasswordStrongEnough } from "./password";
 
 export const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email"),
@@ -16,7 +17,11 @@ export const signupSchema = z
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
-      .max(100, "Password is too long"),
+      .max(100, "Password is too long")
+      .refine(
+        isPasswordStrongEnough,
+        "Too weak — aim for at least Medium strength.",
+      ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -35,7 +40,11 @@ export const resetPasswordSchema = z
     password: z
       .string()
       .min(10, "Password must be at least 10 characters")
-      .max(100, "Password is too long"),
+      .max(100, "Password is too long")
+      .refine(
+        isPasswordStrongEnough,
+        "Too weak — aim for at least Medium strength.",
+      ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
