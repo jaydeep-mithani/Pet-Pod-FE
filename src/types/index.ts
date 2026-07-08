@@ -2,7 +2,7 @@ export type PetSpecies = "DOG" | "CAT" | "RABBIT" | "BIRD" | "SMALL" | "OTHER";
 
 export type PetSize = "SMALL" | "MEDIUM" | "LARGE";
 
-export type PetStatus = "AVAILABLE" | "PENDING" | "ADOPTED";
+export type PetStatus = "AVAILABLE" | "PENDING" | "ADOPTED" | "REMOVED";
 
 export interface Photo {
   id: string;
@@ -55,6 +55,10 @@ export interface User {
   country: string | null;
   emailVerified: boolean;
   createdAt: string;
+  // Credential flags for the settings page. hasPassword=false means a
+  // Google-only account (sets a first password instead of changing one).
+  hasPassword: boolean;
+  googleLinked: boolean;
 }
 
 export interface AuthUserSummary {

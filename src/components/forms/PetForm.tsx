@@ -73,7 +73,12 @@ const PetForm: React.FC<PetFormProps> = ({
       years,
       months,
       size: initial?.size ?? "MEDIUM",
-      status: initial?.status ?? "AVAILABLE",
+      // REMOVED is system-only (account deletion) and never reaches this
+      // form in practice — narrow it away for the user-settable field type.
+      status:
+        initial?.status && initial.status !== "REMOVED"
+          ? initial.status
+          : "AVAILABLE",
       shortDescription: initial?.shortDescription ?? "",
       story: initial?.story ?? undefined,
       reasonForRehoming: initial?.reasonForRehoming ?? undefined,

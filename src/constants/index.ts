@@ -35,6 +35,9 @@ export const STATUS_LABEL: Record<PetStatus, string> = {
   AVAILABLE: "Available",
   PENDING: "Pending",
   ADOPTED: "Adopted",
+  // System-only: set when a listing is taken down (e.g. account deletion).
+  // Excluded from STATUS_OPTIONS so users can't pick it in forms.
+  REMOVED: "Removed",
 };
 
 export const SPECIES_OPTIONS = (Object.keys(SPECIES_LABEL) as PetSpecies[]).map(
@@ -45,9 +48,9 @@ export const SIZE_OPTIONS = (Object.keys(SIZE_LABEL) as PetSize[]).map(
   (value) => ({ value, label: SIZE_LABEL[value] }),
 );
 
-export const STATUS_OPTIONS = (Object.keys(STATUS_LABEL) as PetStatus[]).map(
-  (value) => ({ value, label: STATUS_LABEL[value] }),
-);
+export const STATUS_OPTIONS = (Object.keys(STATUS_LABEL) as PetStatus[])
+  .filter((value) => value !== "REMOVED")
+  .map((value) => ({ value, label: STATUS_LABEL[value] }));
 
 export const HOW_IT_WORKS_STEPS = [
   {

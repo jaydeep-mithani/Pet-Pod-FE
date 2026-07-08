@@ -52,6 +52,34 @@ export const resetPasswordSchema = z
     message: "Passwords don't match",
   });
 
+// Change-password (settings page). Google-only accounts are setting a first
+// password and have no current one, so the factory flips that requirement.
+export function makeChangePasswordSchema(hasPassword: boolean) {
+  return z
+    .object({
+      currentPassword: hasPassword
+        ? z.string().min(1, "Enter your current password")
+        : z.string().optional(),
+      newPassword: z
+        .string()
+        .min(10, "Password must be at least 10 characters")
+        .max(100, "Password is too long")
+        .refine(
+          isPasswordStrongEnough,
+          "Too weak — aim for at least Medium strength.",
+        ),
+      confirmPassword: z.string().min(1, "Please confirm your new password"),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      path: ["confirmPassword"],
+      message: "Passwords don't match",
+    });
+}
+
+export type ChangePasswordValues = z.infer<
+  ReturnType<typeof makeChangePasswordSchema>
+>;
+
 export type LoginValues = z.infer<typeof loginSchema>;
 export type SignupValues = z.infer<typeof signupSchema>;
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;

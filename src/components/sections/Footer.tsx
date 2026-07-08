@@ -13,7 +13,7 @@ const FOOTER_LINKS = {
   account: [
     { label: "Sign up", href: ROUTES.signup },
     { label: "Log in", href: ROUTES.login },
-    { label: "Your profile", href: ROUTES.profile },
+    { label: "Settings", href: ROUTES.settings },
   ],
 };
 

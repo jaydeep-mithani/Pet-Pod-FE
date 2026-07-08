@@ -81,10 +81,10 @@ export default function PublicProfilePage() {
   }, [id]);
 
   // If you somehow landed on your own profile via /profile/[id], shortcut to
-  // the editable /profile page.
+  // the editable Settings › Profile page.
   useEffect(() => {
     if (currentUser && profile && currentUser.id === profile.id) {
-      router.replace(ROUTES.profile);
+      router.replace(ROUTES.settingsProfile);
     }
   }, [currentUser, profile, router]);
 
