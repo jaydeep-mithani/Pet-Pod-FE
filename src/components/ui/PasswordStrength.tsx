@@ -11,9 +11,8 @@ const SEGMENTS = 5;
  * Bucket a password into five tiers (Very weak → Very strong). One point each
  * for reaching 8 and 12 characters, mixing upper- and lower-case, including a
  * digit, and including a symbol; the 0–5 total maps to a tier (0 and 1 both
- * read as "very weak"). The five-segment meter nudges people toward the top of
- * the scale. Returns 0 for an empty password so callers can hide the meter
- * until typing starts.
+ * read as "very weak"). Returns 0 only for an empty password, which the meter
+ * renders as an idle grey track.
  */
 export function scorePasswordStrength(password: string): PasswordStrengthLevel {
   if (!password) return 0;
@@ -34,8 +33,8 @@ const LEVEL_META: Record<1 | 2 | 3 | 4 | 5, { label: string; bar: string }> = {
   5: { label: "Very strong", bar: "bg-green-600" },
 };
 
-// The meter sits on the auth form card, which is light in playful/calm and
-// dark in bold — so the label ink and empty-track colour flip for bold.
+// The meter sits inside the auth input, which is light in playful/calm and
+// dark in bold — so the label ink and idle-track colour flip for bold.
 const LABEL_INK: Record<"light" | "dark", Record<1 | 2 | 3 | 4 | 5, string>> = {
   light: {
     1: "text-red-600",
@@ -65,16 +64,17 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({
   const { vibe } = useMotionVibe();
   const level = scorePasswordStrength(value);
 
-  // Nothing to show until the user starts typing.
-  if (level === 0) return null;
-
   const surface = vibe === "bold" ? "dark" : "light";
-  const track = surface === "dark" ? "bg-white/15" : "bg-gray-200";
-  const meta = LEVEL_META[level];
+  const track = surface === "dark" ? "bg-white/20" : "bg-gray-300/70";
+
+  // Narrows level away from 0 in the else branches so the 1–5 maps type-check.
+  const activeBar = level === 0 ? null : LEVEL_META[level].bar;
+  const label = level === 0 ? "Password strength" : LEVEL_META[level].label;
+  const labelInk = level === 0 ? "text-gray-400" : LABEL_INK[surface][level];
 
   return (
     <div
-      className={cn("flex items-center gap-2", className)}
+      className={cn("flex items-center justify-between gap-3", className)}
       aria-live="polite"
     >
       <div className="flex gap-1">
@@ -83,14 +83,12 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({
             key={segment}
             className={cn(
               "h-1.5 w-6 rounded-full transition-colors duration-300",
-              segment <= level ? meta.bar : track,
+              activeBar && segment <= level ? activeBar : track,
             )}
           />
         ))}
       </div>
-      <span className={cn("text-xs font-medium", LABEL_INK[surface][level])}>
-        {meta.label}
-      </span>
+      <span className={cn("text-xs font-medium", labelInk)}>{label}</span>
     </div>
   );
 };

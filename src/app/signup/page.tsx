@@ -133,18 +133,16 @@ export default function SignupPage() {
           {...form.register("email")}
           error={form.formState.errors.email?.message}
         />
-        <div className="space-y-2">
-          <PasswordInput
-            label="Password"
-            autoComplete="new-password"
-            placeholder="At least 8 characters"
-            hint="Mix letters, numbers, and a symbol for a stronger password."
-            required
-            {...form.register("password")}
-            error={form.formState.errors.password?.message}
-          />
-          <PasswordStrength value={passwordValue ?? ""} />
-        </div>
+        <PasswordInput
+          label="Password"
+          autoComplete="new-password"
+          placeholder="At least 8 characters"
+          hint="Mix letters, numbers, and a symbol for a stronger password."
+          required
+          {...form.register("password")}
+          error={form.formState.errors.password?.message}
+          footer={<PasswordStrength value={passwordValue ?? ""} />}
+        />
         <PasswordInput
           label="Confirm password"
           autoComplete="new-password"
