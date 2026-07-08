@@ -2,28 +2,9 @@
 
 import { useMotionVibe } from "@/lib/motion";
 import { cn } from "@/utils";
-
-export type PasswordStrengthLevel = 0 | 1 | 2 | 3 | 4 | 5;
+import { scorePasswordStrength } from "@/lib/validation/password";
 
 const SEGMENTS = 5;
-
-/**
- * Bucket a password into five tiers (Very weak → Very strong). One point each
- * for reaching 8 and 12 characters, mixing upper- and lower-case, including a
- * digit, and including a symbol; the 0–5 total maps to a tier (0 and 1 both
- * read as "very weak"). Returns 0 only for an empty password, which the meter
- * renders as an idle grey track.
- */
-export function scorePasswordStrength(password: string): PasswordStrengthLevel {
-  if (!password) return 0;
-  let points = 0;
-  if (password.length >= 8) points++;
-  if (password.length >= 12) points++;
-  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) points++;
-  if (/\d/.test(password)) points++;
-  if (/[^A-Za-z0-9]/.test(password)) points++;
-  return Math.max(1, points) as PasswordStrengthLevel;
-}
 
 const LEVEL_META: Record<1 | 2 | 3 | 4 | 5, { label: string; bar: string }> = {
   1: { label: "Very weak", bar: "bg-red-500" },
