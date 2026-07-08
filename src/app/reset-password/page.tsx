@@ -226,16 +226,18 @@ function ResetPasswordContent() {
           value=""
         />
 
-        <PasswordInput
-          label="New password"
-          autoComplete="new-password"
-          placeholder="At least 10 characters"
-          icon={KeyRound}
-          required
-          {...form.register("password")}
-          error={form.formState.errors.password?.message}
-        />
-        <PasswordStrength value={watchedPw ?? ""} />
+        <div className="space-y-2">
+          <PasswordInput
+            label="New password"
+            autoComplete="new-password"
+            placeholder="At least 10 characters"
+            icon={KeyRound}
+            required
+            {...form.register("password")}
+            error={form.formState.errors.password?.message}
+          />
+          <PasswordStrength value={watchedPw ?? ""} />
+        </div>
         <PasswordInput
           label="Confirm new password"
           autoComplete="new-password"
