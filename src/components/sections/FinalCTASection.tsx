@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Heart, PawPrint } from "lucide-react";
 import Button from "../ui/Button";
 import ScrollReveal from "../ui/ScrollReveal";
@@ -10,6 +11,10 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 const FinalCTASection: React.FC = () => {
   const { status } = useAuth();
   const authed = status === "authed";
+  // On /pets the "Browse pets" CTA would link to the current page (a no-op),
+  // so drop it there and let the primary action stand on its own.
+  const pathname = usePathname();
+  const onPetsPage = pathname === ROUTES.pets;
 
   return (
     <section className="animate-gradient relative overflow-hidden bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 py-20 sm:py-28">
@@ -45,15 +50,17 @@ const FinalCTASection: React.FC = () => {
                     List a pet
                   </Button>
                 </Link>
-                <Link href={ROUTES.pets} className="w-full sm:w-auto">
-                  <Button
-                    variant="ghost"
-                    size="lg"
-                    className="w-full bg-white/10 text-white hover:bg-white/20 sm:w-auto sm:min-w-[200px]"
-                  >
-                    Browse pets
-                  </Button>
-                </Link>
+                {!onPetsPage && (
+                  <Link href={ROUTES.pets} className="w-full sm:w-auto">
+                    <Button
+                      variant="ghost"
+                      size="lg"
+                      className="w-full bg-white/10 text-white hover:bg-white/20 sm:w-auto sm:min-w-[200px]"
+                    >
+                      Browse pets
+                    </Button>
+                  </Link>
+                )}
               </>
             ) : (
               <>
@@ -67,15 +74,17 @@ const FinalCTASection: React.FC = () => {
                     Join Pet Pod
                   </Button>
                 </Link>
-                <Link href={ROUTES.pets} className="w-full sm:w-auto">
-                  <Button
-                    variant="ghost"
-                    size="lg"
-                    className="w-full bg-white/10 text-white hover:bg-white/20 sm:w-auto sm:min-w-[200px]"
-                  >
-                    Browse pets first
-                  </Button>
-                </Link>
+                {!onPetsPage && (
+                  <Link href={ROUTES.pets} className="w-full sm:w-auto">
+                    <Button
+                      variant="ghost"
+                      size="lg"
+                      className="w-full bg-white/10 text-white hover:bg-white/20 sm:w-auto sm:min-w-[200px]"
+                    >
+                      Browse pets first
+                    </Button>
+                  </Link>
+                )}
               </>
             )}
           </div>

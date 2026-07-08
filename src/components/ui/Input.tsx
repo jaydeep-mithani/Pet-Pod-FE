@@ -48,6 +48,9 @@ interface InputProps extends Omit<
   hint?: string;
   icon?: LucideIcon;
   rightSlot?: React.ReactNode;
+  /** Rendered inside the field border, docked below the input row (e.g. a
+   * strength meter) so it reads as one unit with the field. */
+  footer?: React.ReactNode;
   containerClassName?: string;
   /** Show "x / maxLength" counter beside the label. Requires `maxLength` to be set. */
   showCount?: boolean;
@@ -60,6 +63,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     hint,
     icon: Icon,
     rightSlot,
+    footer,
     className,
     containerClassName,
     required,
@@ -130,30 +134,38 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       )}
       <div
         className={cn(
-          "flex items-center gap-2 rounded-xl border-2 bg-white px-3 transition-all",
+          "rounded-xl border-2 bg-white transition-all",
           FIELD_CHROME[vibe].focus,
           error
             ? "border-red-400"
             : cn("border-gray-200", FIELD_CHROME[vibe].hover),
           rest.disabled && "cursor-not-allowed opacity-60",
+          footer && "overflow-hidden",
         )}
       >
-        {Icon && (
-          <Icon className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
-        )}
-        <input
-          ref={setRef}
-          id={inputId}
-          required={required}
-          maxLength={maxLength}
-          onChange={handleChange}
-          className={cn(
-            "w-full bg-transparent py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none",
-            className,
+        <div className="flex items-center gap-2 px-3">
+          {Icon && (
+            <Icon className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
           )}
-          {...rest}
-        />
-        {rightSlot && <div className="shrink-0">{rightSlot}</div>}
+          <input
+            ref={setRef}
+            id={inputId}
+            required={required}
+            maxLength={maxLength}
+            onChange={handleChange}
+            className={cn(
+              "w-full bg-transparent py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none",
+              className,
+            )}
+            {...rest}
+          />
+          {rightSlot && <div className="shrink-0">{rightSlot}</div>}
+        </div>
+        {footer && (
+          <div className="border-t border-gray-200/80 bg-gray-50 px-3 py-2.5">
+            {footer}
+          </div>
+        )}
       </div>
       {error ? (
         <p className="text-xs text-red-500">{error}</p>
